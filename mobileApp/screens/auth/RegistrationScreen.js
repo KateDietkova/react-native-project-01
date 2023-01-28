@@ -21,7 +21,7 @@ const initialState = {
   password: "",
 };
 
-export default function RegistrationScreen({ onLayout }) {
+export default function RegistrationScreen({ options, navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [inputName, setInputName] = useState("");
   const [showPassword, setShowPassword] = useState(true);
@@ -64,7 +64,7 @@ export default function RegistrationScreen({ onLayout }) {
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View style={styles.container} onLayout={onLayout}>
+      <View style={styles.container} onLayout={options}>
         <ImageBackground
           style={{
             ...styles.image,
@@ -86,9 +86,7 @@ export default function RegistrationScreen({ onLayout }) {
                 {/* <CloseIcon style={styles.removeIcon}/> */}
               </View>
               <View style={styles.header}>
-                <Text style={styles.headerTitle}>
-                  Registration
-                </Text>
+                <Text style={styles.headerTitle}>Registration</Text>
               </View>
               <View>
                 <TextInput
@@ -163,9 +161,17 @@ export default function RegistrationScreen({ onLayout }) {
               >
                 <Text style={styles.btnTitle}>SIGN UP</Text>
               </TouchableOpacity>
-              <Text style={styles.additionalText}>
-                Have you already account? Sing in
-              </Text>
+              <TouchableOpacity
+                activeOpacity={0.2}
+                style={styles.linkBtn}
+                onPress={() => {
+                  navigation.navigate("Login");
+                }}
+              >
+                <Text style={styles.additionalText}>
+                  Have you already account? Sing in
+                </Text>
+              </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
@@ -274,12 +280,18 @@ const styles = StyleSheet.create({
     fontWeight: "medium",
   },
   additionalText: {
-    marginTop: 16,
     fontFamily: "RobotoRegular",
     fontSize: 16,
     lineHeight: 19,
     textAlign: "center",
     color: "#1B4371",
+  },
+
+  linkBtn: {
+    fontSize: 16,
+    lineHeight: 19,
+    textAlign: "center",
+    marginTop: 16,
   },
   photoContainer: {
     position: "absolute",
