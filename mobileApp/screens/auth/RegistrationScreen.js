@@ -82,11 +82,13 @@ export default function RegistrationScreen({ onLayout }) {
               }}
             >
               <View style={styles.photoContainer}>
-                <CustomIcon style={styles.addIcon}/>
+                <CustomIcon style={styles.addIcon} />
                 {/* <CloseIcon style={styles.removeIcon}/> */}
               </View>
               <View style={styles.header}>
-                <Text style={styles.headerTitle}>Registration </Text>
+                <Text style={styles.headerTitle}>
+                  Registration
+                </Text>
               </View>
               <View>
                 <TextInput
@@ -275,7 +277,9 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontFamily: "RobotoRegular",
     fontSize: 16,
+    lineHeight: 19,
     textAlign: "center",
+    color: "#1B4371",
   },
   photoContainer: {
     position: "absolute",
@@ -296,6 +300,5 @@ const styles = StyleSheet.create({
     top: 75,
     right: -16,
     color: "#E8E8E8",
-    
   },
 });

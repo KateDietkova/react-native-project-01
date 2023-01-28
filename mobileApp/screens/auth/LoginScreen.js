@@ -137,7 +137,7 @@ export default function RegistrationScreen({ onLayout }) {
                 <Text style={styles.btnTitle}>SIGN UP</Text>
               </TouchableOpacity>
               <Text style={styles.additionalText}>
-                Have you already account? Sing in
+                Haven't account? Sing up
               </Text>
             </View>
           </KeyboardAvoidingView>
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     resizeMode: "contain",
-      justifyContent: "flex-end",
+    justifyContent: "flex-end",
     // justifyContent: "center",
     // alignItems: "center",
   },
@@ -251,6 +251,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontFamily: "RobotoRegular",
     fontSize: 16,
+    lineHeight: 19,
     textAlign: "center",
+    color: "#1B4371",
   },
 });
