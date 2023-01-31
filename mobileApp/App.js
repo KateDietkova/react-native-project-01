@@ -1,21 +1,18 @@
 import { useCallback } from "react";
-import LoginScreen from "./screens/auth/LoginScreen";
-import RegistrationScreen from "./screens/auth/RegistrationScreen";
+import { useRoute } from "./src/route";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
-const MainStack = createStackNavigator();
 
 export default function App() {
   let [fontsLoaded] = useFonts({
     RobotoRegular: require("./assets/fonts/Roboto-Regular.ttf"),
     RobotoMedium: require("./assets/fonts/Roboto-Medium.ttf"),
+    RobotoBold: require("./assets/fonts/Roboto-Bold.ttf"),
   });
-
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
@@ -26,25 +23,11 @@ export default function App() {
     return null;
   }
 
+  const routing = useRoute(true, onLayoutRootView);
+
   return (
     <NavigationContainer>
-      <MainStack.Navigator initialRouteName="Login">
-        <MainStack.Screen
-          name="Registration"
-          component={RegistrationScreen}
-          options={{ onLayoutRootView }}
-          // onLayout={onLayoutRootView}
-        />
-        <MainStack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ onLayoutRootView }}
-          // onLayout={onLayoutRootView}
-        />
-      </MainStack.Navigator>
+      {routing}
     </NavigationContainer>
   );
 }
-
-
-// onLayout={onLayoutRootView}

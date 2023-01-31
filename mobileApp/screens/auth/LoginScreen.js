@@ -16,8 +16,8 @@ const initialState = {
   email: "",
   password: "",
 };
-
-export default function RegistrationScreen({ options, navigation }) {
+// onLayout;
+export default function RegistrationScreen({ options, navigation, onLayout }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [inputName, setInputName] = useState("");
   const [showPassword, setShowPassword] = useState(true);
@@ -58,7 +58,7 @@ export default function RegistrationScreen({ options, navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View style={styles.container} onLayout={options}>
+      <View style={styles.container} onLayout={onLayout}>
         <ImageBackground
           style={{
             ...styles.image,
