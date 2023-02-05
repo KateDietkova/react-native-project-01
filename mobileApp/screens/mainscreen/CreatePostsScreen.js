@@ -1,4 +1,4 @@
-
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,12 +7,51 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   SafeAreaView,
+  Image,
 } from "react-native";
 import CameraIcon from "../../src/components/icons/CameraIcon";
+import DeleteIcon from "react-native-vector-icons/MaterialIcons";
 import { CreatePostForm } from "../../src/components/pagesComponents/CreatePostForm";
+import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
 
+const CreatePostsScreen = ({ onLayout, navigation }) => {
+  const [hasPermission, setHasPermission] = useState(null);
+  const [cameraRef, setCameraRef] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [photo, setPhoto] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-const CreatePostsScreen = ({ onLayout }) => {
+  const takePhoto = async () => {
+    if (cameraRef) {
+      const photo = await cameraRef.takePictureAsync();
+      await MediaLibrary.createAssetAsync(photo.uri);
+      setPhoto(photo);
+      console.log(photo.uri);
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === "granted");
+    })();
+
+    navigation.addListener("focus", () => setIsLoading(true));
+    navigation.addListener("blur", () => setIsLoading(false));
+    // return () => {};
+  }, []);
+
+  if (hasPermission === null) {
+    return <View />;
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
+
+  console.log(photo.uri);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -21,15 +60,70 @@ const CreatePostsScreen = ({ onLayout }) => {
           <View style={styles.createPostContainer} onLayout={onLayout}>
             <View>
               <View style={styles.addPhotoContainer}>
-                <View style={styles.addPhoto}>
-                  <TouchableOpacity style={styles.addPhotoBtn}>
-                    <CameraIcon />
-                  </TouchableOpacity>
-                </View>
+                {isLoading && (
+                  <Camera
+                    style={{ flex: 1 }}
+                    type={type}
+                    ref={(ref) => {
+                      setCameraRef(ref);
+                    }}
+                  >
+                    <View style={styles.addPhoto}>
+                      <View style={styles.photoContainer}>
+                        <Image
+                          style={styles.photo}
+                          source={{ uri: photo.uri }}
+                        />
+                      </View>
+
+                      {photo ? (
+                        <TouchableOpacity
+                          style={styles.deleteButton}
+                          onPress={() => {
+                            setPhoto("");
+                          }}
+                        >
+                          <DeleteIcon name="delete-outline" size={24} />
+                        </TouchableOpacity>
+                      ) : (
+                        <TouchableOpacity
+                          style={styles.flipContainer}
+                          onPress={() => {
+                            setType(
+                              type === Camera.Constants.Type.back
+                                ? Camera.Constants.Type.front
+                                : Camera.Constants.Type.back
+                            );
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: "white",
+                            }}
+                          >
+                            Flip
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+
+                      <TouchableOpacity
+                        style={styles.addPhotoBtn}
+                        onPress={takePhoto}
+                      >
+                        <CameraIcon />
+                      </TouchableOpacity>
+                    </View>
+                  </Camera>
+                )}
               </View>
               <Text style={styles.addPhotoText}>Upload photo</Text>
             </View>
-            <CreatePostForm />
+            <CreatePostForm
+              photo={photo}
+              navigation={navigation}
+              setPhoto={setPhoto}
+            />
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
@@ -46,19 +140,21 @@ const styles = StyleSheet.create({
     paddingTop: 32,
   },
   addPhotoContainer: {
-    alignItems: "center",
+    // alignItems: "center",
     paddingHorizontal: 16,
   },
   addPhoto: {
+    position: "relative",
     flex: 1,
-    width: "100%",
+
     paddingVertical: 90,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F6F6F6",
+    // backgroundColor: "#F6F6F6",
+    // backgroundColor: "transparent",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#E8E8E8",
+    // borderColor: "#E8E8E8",
     borderStyle: "solid",
   },
 
@@ -77,6 +173,40 @@ const styles = StyleSheet.create({
     color: "#BDBDBD",
     marginTop: 8,
     paddingLeft: 16,
+  },
+  flipContainer: {
+    position: "absolute",
+    bottom: 5,
+    right: 2,
+    borderWidth: 1,
+    borderColor: "#BDBDBD",
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
+  },
+  photoContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    flex: 1,
+    height: 400,
+    width: 400,
+  },
+  photo: {
+    height: 400,
+    width: 400,
+  },
+
+  deleteButton: {
+    position: "absolute",
+    bottom: 5,
+    right: 2,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 5,
   },
 });
 

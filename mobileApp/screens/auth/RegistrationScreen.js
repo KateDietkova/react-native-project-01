@@ -21,7 +21,12 @@ const initialState = {
   password: "",
 };
 
-export default function RegistrationScreen({ options, navigation, onLayout }) {
+export default function RegistrationScreen({
+  options,
+  navigation,
+  onLayout,
+  setAuth,
+}) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [inputName, setInputName] = useState("");
   const [showPassword, setShowPassword] = useState(true);
@@ -52,7 +57,6 @@ export default function RegistrationScreen({ options, navigation, onLayout }) {
     setInputName("");
     setShowPassword(true);
     Keyboard.dismiss();
-    setState(initialState);
   };
 
   const onSingUp = () => {
@@ -60,6 +64,7 @@ export default function RegistrationScreen({ options, navigation, onLayout }) {
       "Credentials",
       `${state.name} + ${state.email} + ${state.password}`
     );
+    setAuth(true);
   };
 
   return (

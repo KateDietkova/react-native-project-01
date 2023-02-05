@@ -17,7 +17,7 @@ const initialState = {
   password: "",
 };
 // onLayout;
-export default function RegistrationScreen({ options, navigation, onLayout }) {
+export default function RegistrationScreen({ options, navigation, onLayout, setAuth }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [inputName, setInputName] = useState("");
   const [showPassword, setShowPassword] = useState(true);
@@ -49,11 +49,12 @@ export default function RegistrationScreen({ options, navigation, onLayout }) {
     setShowPassword(true);
     Keyboard.dismiss();
     console.log(state);
-    setState(initialState);
+    // setState(initialState);
   };
 
   const onSingUp = () => {
     console.log("Credentials", `${state.email} + ${state.password}`);
+    setAuth(true);
   };
 
   return (
@@ -134,7 +135,7 @@ export default function RegistrationScreen({ options, navigation, onLayout }) {
                   onSingUp();
                 }}
               >
-                <Text style={styles.btnTitle}>SIGN UP</Text>
+                <Text style={styles.btnTitle}>SIGN IN</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={0.2}

@@ -1,8 +1,27 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import CommentIcon from "../../src/components/icons/CommentIcon";
 import LocationIcon from "../../src/components/icons/LocationIcon";
+import { PostItem } from "../../src/components/pagesComponents/PostItem";
 
-const PostsScreen = ({ onLayout }) => {
+const PostsScreen = ({ onLayout, route }) => {
+  console.log(route.params);
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    if (route.params) {
+      setPosts((prevState) => [...prevState, route.params]);
+    }
+  }, [route.params]);
+
+  console.log(posts);
   return (
     <View style={styles.postScreenContainer} onLayout={onLayout}>
       <View style={styles.userInfoContainer}>
@@ -16,28 +35,13 @@ const PostsScreen = ({ onLayout }) => {
         </View>
       </View>
       <View style={styles.postsContainer}>
-        <View style={styles.post}>
-          <View style={styles.postImageContainer}>
-            <Image
-              style={styles.postImage}
-              source={require("../../assets/images/posts/postImage-1.png")}
-            />
-          </View>
-          <Text style={styles.imageDesc}>Forest</Text>
-          <View style={styles.postInfoContainer}>
-            <TouchableOpacity style={styles.commentBtn}>
-              <CommentIcon />
-              <Text style={styles.commentAmount}>0</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.postInfo}>
-              <LocationIcon />
-              <Text style={styles.locationInfo}>
-                Ivano-Frankivs'k Region, Ukraine
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        {posts && (
+          <FlatList
+            data={posts}
+            renderItem={({ item }) => <PostItem post={item} />}
+            keyExtractor={(post, indx) => indx.toString()}
+          />
+        )}
       </View>
     </View>
   );
@@ -87,55 +91,55 @@ const styles = StyleSheet.create({
     paddingBottom: 43,
     paddingHorizontal: 16,
   },
-  post: {
-    flex: 1,
-    maxHeight: 300,
-    width: "100%",
-    marginTop: 32,
-  },
+  //   post: {
+  //     flex: 1,
+  //     maxHeight: 300,
+  //     width: "100%",
+  //     marginTop: 32,
+  //   },
 
-  postImageContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
-    postImage: {
-      flex: 1,
-      borderRadius: 8,
-      width: "100%",
-    },
-  imageDesc: {
-    fontFamily: "RobotoMedium",
-    fontSize: 16,
-    lineHeight: 19,
-    color: "#212121",
-    marginTop: 8,
-  },
-  postInfoContainer: {
-    marginTop: 8,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  postInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  locationInfo: {
-    marginLeft: 4,
-    fontFamily: "RobotoRegular",
-    fontSize: 16,
-    lineHeight: 19,
-    color: "#212121",
-    textDecorationLine: "underline",
-  },
-  commentBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  commentAmount: {
-    marginLeft: 6,
-    color: "#BDBDBD",
-    fontFamily: "RobotoRegular",
-    fontSize: 16,
-    lineHeight: 19,
-  },
+  //   postImageContainer: {
+  //     flex: 1,
+  //     alignItems: "center",
+  //   },
+  //     postImage: {
+  //       flex: 1,
+  //       borderRadius: 8,
+  //       width: "100%",
+  //     },
+  //   imageDesc: {
+  //     fontFamily: "RobotoMedium",
+  //     fontSize: 16,
+  //     lineHeight: 19,
+  //     color: "#212121",
+  //     marginTop: 8,
+  //   },
+  //   postInfoContainer: {
+  //     marginTop: 8,
+  //     flexDirection: "row",
+  //     justifyContent: "space-between",
+  //   },
+  //   postInfo: {
+  //     flexDirection: "row",
+  //     alignItems: "center",
+  //   },
+  //   locationInfo: {
+  //     marginLeft: 4,
+  //     fontFamily: "RobotoRegular",
+  //     fontSize: 16,
+  //     lineHeight: 19,
+  //     color: "#212121",
+  //     textDecorationLine: "underline",
+  //   },
+  //   commentBtn: {
+  //     flexDirection: "row",
+  //     alignItems: "center",
+  //   },
+  //   commentAmount: {
+  //     marginLeft: 6,
+  //     color: "#BDBDBD",
+  //     fontFamily: "RobotoRegular",
+  //     fontSize: 16,
+  //     lineHeight: 19,
+  //   },
 });

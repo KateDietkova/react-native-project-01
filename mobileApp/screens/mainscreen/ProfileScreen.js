@@ -15,7 +15,7 @@ import CustomIcon from "../../src/components/icons/AddIcon";
 import CloseIcon from "../../src/components/icons/CloseIcon";
 import Logout from "../../src/components/icons/LogoutIcon";
 
-const ProfileScreen = ({ onLayout }) => {
+const ProfileScreen = ({ onLayout, setAuth }) => {
   console.log("ProfileScreen");
   return (
     <SafeAreaView>
@@ -39,7 +39,10 @@ const ProfileScreen = ({ onLayout }) => {
                     <CloseIcon style={styles.removeIcon} />
                   </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.logoutBtn}>
+                <TouchableOpacity
+                  style={styles.logoutBtn}
+                  onPress={() => setAuth(false)}
+                >
                   {/* <CustomIcon style={styles.addIcon} /> */}
                   <Logout style={styles.logoutIcon} />
                 </TouchableOpacity>
@@ -224,8 +227,8 @@ const styles = StyleSheet.create({
   },
 
   logoutBtn: {
-      position: "absolute",
-      top: 22,
-      right: 16,
+    position: "absolute",
+    top: 22,
+    right: 16,
   },
 });

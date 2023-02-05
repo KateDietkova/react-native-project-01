@@ -16,7 +16,7 @@ import Ionicons from "react-native-vector-icons/Ionicons"; // add
 
 const MainTab = createBottomTabNavigator();
 
-const Home = ({ onLayout }) => {
+const Home = ({ onLayout, setAuth }) => {
   return (
     <MainTab.Navigator
       initialRouteName="Posts"
@@ -31,16 +31,18 @@ const Home = ({ onLayout }) => {
           headerTitle: (props) => <HeaderTitle {...props} title={"Posts"} />,
           headerTitleAlign: "center",
           headerStyle: styles.headerScreen,
-          headerRight: (props) => <IconBtn {...props} icon={Logout} />,
+          headerRight: (props) => (
+            <IconBtn {...props} icon={Logout} setAuth={setAuth} />
+          ),
           tabBarIcon: ({ focused }) => (
             <View
               style={
                 focused
-                  ? { ...styles.tabBarIconWrapper, right: -40 }
+                  ? { ...styles.tabBarIconWrapper, left: 55 }
                   : {
                       ...styles.tabBarIconWrapper,
                       backgroundColor: "none",
-                      right: -40,
+                      left: 55,
                     }
               }
             >
@@ -91,11 +93,11 @@ const Home = ({ onLayout }) => {
             <View
               style={
                 focused
-                  ? { ...styles.tabBarIconWrapper, left: -40 }
+                  ? { ...styles.tabBarIconWrapper, right: 55 }
                   : {
                       ...styles.tabBarIconWrapper,
                       backgroundColor: "none",
-                      left: -40,
+                      right: 55,
                     }
               }
             >
@@ -104,7 +106,9 @@ const Home = ({ onLayout }) => {
           ),
         }}
       >
-        {(props) => <ProfileScreen {...props} onLayout={onLayout} />}
+        {(props) => (
+          <ProfileScreen {...props} onLayout={onLayout} setAuth={setAuth} />
+        )}
       </MainTab.Screen>
     </MainTab.Navigator>
   );

@@ -10,7 +10,6 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-
 } from "react-native";
 
 const initialState = {
@@ -18,11 +17,12 @@ const initialState = {
   location: "",
 };
 
-export const CreatePostForm = () => {
+export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
   const [inputName, setInputName] = useState("");
   const [state, setState] = useState(initialState);
   const [isDisabled, setIsDisabled] = useState(true);
   const headerHeight = useHeaderHeight();
+  const { uri } = photo;
 
   const checkBtnDisabled = () => {
     if (state.title !== "" && state.location !== "") {
@@ -35,8 +35,10 @@ export const CreatePostForm = () => {
   };
   const onPublish = () => {
     console.log("Description image:", state);
+    navigation.navigate("Posts", { uri, ...state });
     setIsDisabled(true);
     setState(initialState);
+    setPhoto("");
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useRoute } from "./src/route";
 import { NavigationContainer } from "@react-navigation/native";
 
@@ -8,6 +8,7 @@ import * as SplashScreen from "expo-splash-screen";
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const [isAuth, setIsAuth] = useState(true);
   let [fontsLoaded] = useFonts({
     RobotoRegular: require("./assets/fonts/Roboto-Regular.ttf"),
     RobotoMedium: require("./assets/fonts/Roboto-Medium.ttf"),
@@ -23,7 +24,8 @@ export default function App() {
     return null;
   }
 
-  const routing = useRoute(true, onLayoutRootView);
+
+  const routing = useRoute(isAuth, onLayoutRootView, setIsAuth);
 
   return (
     <NavigationContainer>
