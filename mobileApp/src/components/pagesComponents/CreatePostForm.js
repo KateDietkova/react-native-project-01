@@ -35,7 +35,7 @@ export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
   };
   const onPublish = () => {
     console.log("Description image:", state);
-    navigation.navigate("Posts", { uri, ...state });
+    navigation.navigate("DefaultScreen", { uri, ...state });
     setIsDisabled(true);
     setState(initialState);
     setPhoto("");
@@ -79,7 +79,6 @@ export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
             position: "relative",
           }}
         >
-          <LocationIcon style={styles.locationIcon} />
           <TextInput
             style={
               inputName === "location"
@@ -103,6 +102,18 @@ export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
               }))
             }
           />
+          <TouchableOpacity
+            style={styles.locationBtn}
+            activeOpacity={0.8}
+            onPress={() => {
+              console.log("in Location Button");
+              navigation.navigate("MapCreatePost", {
+                nameScreen: "DefaultCreatePost",
+              });
+            }}
+          >
+            <LocationIcon style={styles.locationIcon} />
+          </TouchableOpacity>
         </View>
         <TouchableOpacity
           activeOpacity={0.8}
@@ -204,7 +215,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  locationIcon: {
+  locationBtn: {
     position: "absolute",
     top: 4,
   },

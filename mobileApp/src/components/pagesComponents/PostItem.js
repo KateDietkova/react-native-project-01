@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import CommentIcon from "../icons/CommentIcon";
 import LocationIcon from "../icons/LocationIcon";
 
-export const PostItem = ({ post }) => {
+export const PostItem = ({ post, navigation }) => {
   console.log(post);
   return (
     <View style={styles.post}>
@@ -11,16 +11,22 @@ export const PostItem = ({ post }) => {
       </View>
       <Text style={styles.imageDesc}>{post.title}</Text>
       <View style={styles.postInfoContainer}>
-        <TouchableOpacity style={styles.commentBtn}>
+        <TouchableOpacity
+          style={styles.commentBtn}
+          onPress={() => navigation.navigate("Comments")}
+        >
           <CommentIcon />
           <Text style={styles.commentAmount}>0</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.postInfo}>
+        <TouchableOpacity
+          style={styles.postInfo}
+          onPress={() =>
+            navigation.navigate("Map", { nameScreen: "DefaultScreen" })
+          }
+        >
           <LocationIcon />
-          <Text style={styles.locationInfo}>
-            {post.location}
-          </Text>
+          <Text style={styles.locationInfo}>{post.location}</Text>
         </TouchableOpacity>
       </View>
     </View>

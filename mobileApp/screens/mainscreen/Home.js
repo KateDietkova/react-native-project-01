@@ -1,25 +1,23 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StyleSheet, View } from "react-native";
-import { HeaderTitle } from "../../src/components/headers/HeaderTitle";
 
-import CommentsScreen from "./CommentsScreen";
+
 import CreatePostsScreen from "./CreatePostsScreen";
-import MapScreen from "./MapScreen";
 import PostsScreen from "./PostsScreen";
 import ProfileScreen from "./ProfileScreen";
-import { IconBtn } from "../../src/components/headers/IconBtn";
-import Logout from "../../src/components/icons/LogoutIcon";
-import ArrowLeft from "../../src/components/icons/ArrowLeftIcon";
+
 import UserTabBarIcon from "../../src/components/tabBarIcons/UserTabBarIcon";
 import PostsTabBarIcon from "../../src/components/tabBarIcons/PostsTabBarIcon";
 import Ionicons from "react-native-vector-icons/Ionicons"; // add
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const MainTab = createBottomTabNavigator();
 
 const Home = ({ onLayout, setAuth }) => {
+  // const [address, setAddress] = useState({});
   return (
     <MainTab.Navigator
-      initialRouteName="Posts"
+      initialRouteName="DefaultScreen"
       screenOptions={{
         tabBarShowLabel: false,
         tabBarStyle: { height: 83, borderTopWidth: 1 },
@@ -27,15 +25,10 @@ const Home = ({ onLayout, setAuth }) => {
     >
       <MainTab.Screen
         name="Posts"
-        options={{
-          headerTitle: (props) => <HeaderTitle {...props} title={"Posts"} />,
-          headerTitleAlign: "center",
-          headerStyle: styles.headerScreen,
-          headerRight: (props) => (
-            <IconBtn {...props} icon={Logout} setAuth={setAuth} />
-          ),
+        options={({navigation}) => ({
+          headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <View
+            <TouchableOpacity
               style={
                 focused
                   ? { ...styles.tabBarIconWrapper, left: 55 }
@@ -47,23 +40,23 @@ const Home = ({ onLayout, setAuth }) => {
               }
             >
               <PostsTabBarIcon color={focused ? "#fff" : "#212121"} />
-            </View>
+            </TouchableOpacity>
           ),
-        }}
+        })}
       >
-        {(props) => <PostsScreen {...props} onLayout={onLayout} />}
+        {(props) => (
+          <PostsScreen
+            {...props}
+            onLayout={onLayout}
+            setAuth={setAuth}
+
+          />
+        )}
       </MainTab.Screen>
       <MainTab.Screen
         name="CreatePost"
         options={{
-          headerTitle: (props) => (
-            <HeaderTitle {...props} title={"Create Post"} />
-          ),
-          headerTitleAlign: "center",
-          headerStyle: styles.headerScreen,
-          headerLeft: (props) => (
-            <IconBtn {...props} icon={ArrowLeft} navigate={"Posts"} />
-          ),
+          headerShown: false,
           tabBarIcon: ({ focused }) => (
             <View
               style={
@@ -83,7 +76,13 @@ const Home = ({ onLayout, setAuth }) => {
           ),
         }}
       >
-        {(props) => <CreatePostsScreen {...props} onLayout={onLayout} />}
+        {(props) => (
+          <CreatePostsScreen
+            {...props}
+            onLayout={onLayout}
+
+          />
+        )}
       </MainTab.Screen>
       <MainTab.Screen
         name="Profile"
@@ -107,7 +106,11 @@ const Home = ({ onLayout, setAuth }) => {
         }}
       >
         {(props) => (
-          <ProfileScreen {...props} onLayout={onLayout} setAuth={setAuth} />
+          <ProfileScreen
+            {...props}
+            onLayout={onLayout}
+            setAuth={setAuth}
+          />
         )}
       </MainTab.Screen>
     </MainTab.Navigator>

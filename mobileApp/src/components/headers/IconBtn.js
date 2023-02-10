@@ -2,7 +2,7 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "@react-navigation/native";
 
 export const IconBtn = ({ icon: Icon, navigate, setAuth }) => {
-  const navigation = () => {
+  const navigationCustom = () => {
     if (navigate) {
       return (
         <Link to={{ screen: navigate }}>
@@ -13,8 +13,11 @@ export const IconBtn = ({ icon: Icon, navigate, setAuth }) => {
     return <Icon />;
   };
   return (
-    <TouchableOpacity style={styles.headerBtn} onPress={navigate ? null : ()=> setAuth(false)}>
-      {navigation()}
+    <TouchableOpacity
+      style={styles.headerBtn}
+      onPress={navigate ? null : () => setAuth(false)}
+    >
+      {navigationCustom()}
     </TouchableOpacity>
   );
 };
