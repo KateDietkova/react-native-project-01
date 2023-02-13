@@ -27,7 +27,26 @@ const PostScreen = ({ onLayout, setAuth }) => {
       >
         {(props) => <DefaultScreen {...props} onLayout={onLayout} />}
       </NestedScreen.Screen>
-      <NestedScreen.Screen name="Comments" component={CommentsScreen} />
+      <NestedScreen.Screen
+        name="Comments"
+        options={({ navigation }) => ({
+          headerTitle: (props) => <HeaderTitle {...props} title={"Comments"} />,
+          headerTitleAlign: "center",
+          headerStyle: styles.headerScreen,
+          headerLeft: () => (
+            <TouchableOpacity
+              style={{ marginLeft: 16 }}
+              onPress={() => {
+                navigation.navigate("DefaultScreen");
+              }}
+            >
+              <ArrowLeft />
+            </TouchableOpacity>
+          ),
+        })}
+      >
+        {(props) => <CommentsScreen {...props} onLayout={onLayout} />}
+      </NestedScreen.Screen>
       <NestedScreen.Screen
         name="Map"
         options={({ navigation }) => ({

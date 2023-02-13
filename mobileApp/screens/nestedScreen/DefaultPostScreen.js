@@ -96,10 +96,4 @@ const styles = StyleSheet.create({
     lineHeight: 13,
     color: "rgba(33, 33, 33, 0.8)",
   },
-  // postsContainer: {
-  //   flex: 1,
-  //   // alignItems: "center",
-  //   paddingBottom: 43,
-  //   paddingHorizontal: 16,
-  // },
 });
