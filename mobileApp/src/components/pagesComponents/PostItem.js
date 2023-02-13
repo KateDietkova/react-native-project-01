@@ -5,46 +5,52 @@ import LocationIcon from "../icons/LocationIcon";
 export const PostItem = ({ post, navigation }) => {
   console.log(post);
   return (
-    <View style={styles.post}>
-      <View style={styles.postImageContainer}>
-        <Image
-          style={styles.postImage}
-          source={
-            post.uri
-              ? { uri: post.uri }
-              : require("../../../assets/images/posts/default_image.png")
-          }
-        />
-      </View>
-      <Text style={styles.imageDesc}>{post.title}</Text>
-      <View style={styles.postInfoContainer}>
-        <TouchableOpacity
-          style={styles.commentBtn}
-          onPress={() => navigation.navigate("Comments")}
-        >
-          <CommentIcon />
-          <Text style={styles.commentAmount}>0</Text>
-        </TouchableOpacity>
+    <View style={styles.postItemContainer}>
+      <View style={styles.postItem}>
+        <View style={styles.postImageContainer}>
+          <Image
+            style={styles.postImage}
+            source={
+              post.uri
+                ? { uri: post.uri }
+                : require("../../../assets/images/posts/default_image.png")
+            }
+          />
+        </View>
+        <Text style={styles.imageDesc}>{post.title}</Text>
+        <View style={styles.postInfoContainer}>
+          <TouchableOpacity
+            style={styles.commentBtn}
+            onPress={() => navigation.navigate("Comments")}
+          >
+            <CommentIcon />
+            <Text style={styles.commentAmount}>0</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.postInfo}
-          onPress={() =>
-            navigation.navigate("Map", {
-              nameScreen: "DefaultScreen",
-              location: post.locationMap,
-            })
-          }
-        >
-          <LocationIcon />
-          <Text style={styles.locationInfo}>{post.location}</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.postInfo}
+            onPress={() =>
+              navigation.navigate("Map", {
+                nameScreen: "DefaultScreen",
+                location: post.locationMap,
+              })
+            }
+          >
+            <LocationIcon />
+            <Text style={styles.locationInfo}>{post.location}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  post: {
+  postItemContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
+  postItem: {
     position: "relative",
     flex: 1,
     height: 300,

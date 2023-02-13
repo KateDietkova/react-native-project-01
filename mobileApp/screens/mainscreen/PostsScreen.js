@@ -30,7 +30,7 @@ const PostScreen = ({ onLayout, setAuth }) => {
       <NestedScreen.Screen name="Comments" component={CommentsScreen} />
       <NestedScreen.Screen
         name="Map"
-        options={({ navigation, }) => ({
+        options={({ navigation }) => ({
           headerTitle: (props) => <HeaderTitle {...props} title={"Map"} />,
           headerTitleAlign: "center",
           headerStyle: styles.headerScreen,

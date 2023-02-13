@@ -6,7 +6,6 @@ import {
   Image,
   FlatList,
   SafeAreaView,
-  ScrollView,
 } from "react-native";
 
 import { PostItem } from "../../src/components/pagesComponents/PostItem";
@@ -23,32 +22,40 @@ const DefaultScreen = ({ onLayout, route, navigation }) => {
 
   console.log(posts);
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
-        <View style={styles.postScreenContainer} onLayout={onLayout}>
-          <View style={styles.userInfoContainer}>
-            <Image
-              style={styles.userPhoto}
-              source={require("../../assets/images/userPhoto.png")}
-            />
-            <View style={styles.userInfo}>
-              <Text style={styles.userName}>Natali Romanova</Text>
-              <Text style={styles.userEmail}>email@example.com</Text>
-            </View>
-          </View>
-          <View style={styles.postsContainer}>
-            {posts && (
-              <FlatList
-                data={posts}
-                renderItem={({ item }) => (
-                  <PostItem post={item} navigation={navigation} />
-                )}
-                keyExtractor={(indx) => indx.toString()}
-              />
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "#FFFFFF",
+      }}
+    >
+      <View style={styles.postScreenContainer} onLayout={onLayout}>
+        {posts && (
+          <FlatList
+            style={{ paddingHorizontal: 16 }}
+            ListHeaderComponent={
+              <>
+                <View style={styles.userInfoContainer}>
+                  <Image
+                    style={styles.userPhoto}
+                    source={require("../../assets/images/userPhoto.png")}
+                  />
+                  <View style={styles.userInfo}>
+                    <Text style={styles.userName}>Natali Romanova</Text>
+                    <Text style={styles.userEmail}>email@example.com</Text>
+                  </View>
+                </View>
+              </>
+            }
+            data={posts}
+            renderItem={({ item, index }) => (
+              <PostItem key={index} post={item} navigation={navigation} />
             )}
-          </View>
-        </View>
-      </ScrollView>
+            keyExtractor={(item, indx) => {
+              indx.toString();
+            }}
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 };
@@ -58,12 +65,12 @@ export default DefaultScreen;
 const styles = StyleSheet.create({
   postScreenContainer: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#fff",
+    paddingBottom: 43,
   },
   userInfoContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
     paddingTop: 32,
   },
   headerTitle: {
@@ -91,10 +98,10 @@ const styles = StyleSheet.create({
     lineHeight: 13,
     color: "rgba(33, 33, 33, 0.8)",
   },
-  postsContainer: {
-    flex: 1,
-    alignItems: "center",
-    paddingBottom: 43,
-    paddingHorizontal: 16,
-  },
+  // postsContainer: {
+  //   flex: 1,
+  //   // alignItems: "center",
+  //   paddingBottom: 43,
+  //   paddingHorizontal: 16,
+  // },
 });
