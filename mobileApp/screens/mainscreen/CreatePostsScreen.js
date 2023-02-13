@@ -106,10 +106,18 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
                       )}
 
                       <TouchableOpacity
-                        style={styles.addPhotoBtn}
+                        style={
+                          photo.uri
+                            ? {
+                                ...styles.addPhotoBtn,
+                              opacity: 0.3,
+                              }
+                            : styles.addPhotoBtn
+                        }
                         onPress={takePhoto}
+                        disabled={photo.uri}
                       >
-                        <CameraIcon />
+                        <CameraIcon color={ photo.uri ? "#fff" :"#BDBDBD"} />
                       </TouchableOpacity>
                     </View>
                   </Camera>
@@ -147,18 +155,15 @@ const styles = StyleSheet.create({
     paddingVertical: 90,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderStyle: "solid",
   },
 
   addPhotoBtn: {
     width: 60,
     height: 60,
-    backgroundColor: "#fff",
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#fff",
   },
   addPhotoText: {
     fontFamily: "RobotoRegular",
