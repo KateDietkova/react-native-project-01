@@ -1,6 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StyleSheet, View } from "react-native";
-
+import ArrowLeft from "../../src/components/icons/ArrowLeftIcon";
+import { HeaderTitle } from "../../src/components/headers/HeaderTitle";
+import { IconBtn } from "../../src/components/headers/IconBtn";
 
 import CreatePostsScreen from "./CreatePostsScreen";
 import PostsScreen from "./PostsScreen";
@@ -25,7 +27,7 @@ const Home = ({ onLayout, setAuth }) => {
     >
       <MainTab.Screen
         name="Posts"
-        options={({navigation}) => ({
+        options={({ navigation }) => ({
           headerShown: false,
           tabBarIcon: ({ focused }) => (
             <TouchableOpacity
@@ -45,18 +47,20 @@ const Home = ({ onLayout, setAuth }) => {
         })}
       >
         {(props) => (
-          <PostsScreen
-            {...props}
-            onLayout={onLayout}
-            setAuth={setAuth}
-
-          />
+          <PostsScreen {...props} onLayout={onLayout} setAuth={setAuth} />
         )}
       </MainTab.Screen>
       <MainTab.Screen
         name="CreatePost"
         options={{
-          headerShown: false,
+          headerTitle: (props) => (
+            <HeaderTitle {...props} title={"Create Post"} />
+          ),
+          headerTitleAlign: "center",
+          headerStyle: styles.headerScreen,
+          headerLeft: (props) => (
+            <IconBtn {...props} icon={ArrowLeft} navigate={"DefaultScreen"} />
+          ),
           tabBarIcon: ({ focused }) => (
             <View
               style={
@@ -76,13 +80,7 @@ const Home = ({ onLayout, setAuth }) => {
           ),
         }}
       >
-        {(props) => (
-          <CreatePostsScreen
-            {...props}
-            onLayout={onLayout}
-
-          />
-        )}
+        {(props) => <CreatePostsScreen {...props} onLayout={onLayout} />}
       </MainTab.Screen>
       <MainTab.Screen
         name="Profile"
@@ -106,11 +104,7 @@ const Home = ({ onLayout, setAuth }) => {
         }}
       >
         {(props) => (
-          <ProfileScreen
-            {...props}
-            onLayout={onLayout}
-            setAuth={setAuth}
-          />
+          <ProfileScreen {...props} onLayout={onLayout} setAuth={setAuth} />
         )}
       </MainTab.Screen>
     </MainTab.Navigator>

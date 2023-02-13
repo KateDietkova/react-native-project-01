@@ -7,7 +7,14 @@ export const PostItem = ({ post, navigation }) => {
   return (
     <View style={styles.post}>
       <View style={styles.postImageContainer}>
-        <Image style={styles.postImage} source={{ uri: post.uri }} />
+        <Image
+          style={styles.postImage}
+          source={
+            post.uri
+              ? { uri: post.uri }
+              : require("../../../assets/images/posts/default_image.png")
+          }
+        />
       </View>
       <Text style={styles.imageDesc}>{post.title}</Text>
       <View style={styles.postInfoContainer}>
@@ -22,7 +29,10 @@ export const PostItem = ({ post, navigation }) => {
         <TouchableOpacity
           style={styles.postInfo}
           onPress={() =>
-            navigation.navigate("Map", { nameScreen: "DefaultScreen" })
+            navigation.navigate("Map", {
+              nameScreen: "DefaultScreen",
+              location: post.locationMap,
+            })
           }
         >
           <LocationIcon />

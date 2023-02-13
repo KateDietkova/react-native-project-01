@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useHeaderHeight } from "@react-navigation/elements";
 import LocationIcon from "../icons/LocationIcon";
+import * as Location from "expo-location";
 
 import {
   View,
@@ -17,12 +18,39 @@ const initialState = {
   location: "",
 };
 
+
+
 export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
+  const [locationMap, setLocationMap] = useState({});
   const [inputName, setInputName] = useState("");
   const [state, setState] = useState(initialState);
   const [isDisabled, setIsDisabled] = useState(true);
   const headerHeight = useHeaderHeight();
   const { uri } = photo;
+
+  useEffect(() => {
+    const getLocation = async () => {
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          console.log("Permission to access location was denied");
+          return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        const coords = {
+          latitude: location.coords.latitude ? location.coords.latitude : 0,
+          longitude: location.coords.longitude ? location.coords.longitude : 0,
+        };
+        console.log(coords);
+        setLocationMap(coords);
+      } catch (error) {
+        console.log("Error in set coordinate", error);
+      }
+    };
+
+    getLocation();
+  }, []);
 
   const checkBtnDisabled = () => {
     if (state.title !== "" && state.location !== "") {
@@ -33,9 +61,10 @@ export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
       setIsDisabled(true);
     }
   };
+
   const onPublish = () => {
     console.log("Description image:", state);
-    navigation.navigate("DefaultScreen", { uri, ...state });
+    navigation.navigate("DefaultScreen", { locationMap, uri, ...state });
     setIsDisabled(true);
     setState(initialState);
     setPhoto("");
@@ -102,18 +131,8 @@ export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
               }))
             }
           />
-          <TouchableOpacity
-            style={styles.locationBtn}
-            activeOpacity={0.8}
-            onPress={() => {
-              console.log("in Location Button");
-              navigation.navigate("MapCreatePost", {
-                nameScreen: "DefaultCreatePost",
-              });
-            }}
-          >
-            <LocationIcon style={styles.locationIcon} />
-          </TouchableOpacity>
+
+          <LocationIcon style={styles.locationIcon} />
         </View>
         <TouchableOpacity
           activeOpacity={0.8}
@@ -215,7 +234,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  locationBtn: {
+  locationIcon: {
     position: "absolute",
     top: 4,
   },

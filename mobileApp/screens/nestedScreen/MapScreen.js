@@ -1,52 +1,16 @@
 import { useState, useEffect } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import * as Location from "expo-location";
+
 
 const MapScreen = ({ route }) => {
-  const [location, setLocation] = useState(null);
-  const [addressName, setAddress] = useState({});
+  const [location, setlocation] = useState(route.params.location)
+  const [isShowMarker, setisShowMarker] = useState(false);
   useEffect(() => {
-    (async () => {
-      try {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          console.log("Permission to access location was denied");
-          return;
-        }
-
-        let location = await Location.getCurrentPositionAsync({});
-        const coords = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        };
-        setLocation(coords);
-      } catch (error) {
-        console.log("Error in set coordinate", error);
-      }
-    })();
+    if (Object.keys(location).length !== 0) {
+      setisShowMarker(true);
+    }
   }, []);
-
-  // let address = [];
-  // const getAddress = async (location) => {
-  //   try {
-  //     if (route.params.nameScreen === "CreatePost" && location) {
-  //       address = await Location.reverseGeocodeAsync(location);
-  //     }
-  //       setAddress((prevState) => {
-  //         if (prevState !== address[0]) return address[0];
-  //       });
-  //       console.log("Cicle");
-  //   } catch (error) {
-  //     console.log("Error in getAddress", error);
-  //   }
-  // };
-
-  // getAddress(location);
-
-  // if (address) {
-  //   console.log(route);
-  // }
 
   return (
     <View style={styles.container}>
@@ -59,13 +23,9 @@ const MapScreen = ({ route }) => {
         }}
         mapType="standard"
         minZoomLevel={15}
-        onPress={(e) => {
-          setLocation(e.nativeEvent.coordinate);
-        }}
         // onMapReady={() => console.log("Map is ready")}
-        // onRegionChange={(region) => console.log(region)}
       >
-        {location && (
+        {isShowMarker && (
           <Marker
             title="I am here"
             coordinate={{ ...location }}

@@ -11,7 +11,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 
 const NestedScreen = createStackNavigator();
 
-const PostScreen = ({ onLayout, setAuth, setAddress, address }) => {
+const PostScreen = ({ onLayout, setAuth }) => {
   return (
     <NestedScreen.Navigator initialRouteName="DefaultScreen">
       <NestedScreen.Screen
@@ -30,7 +30,7 @@ const PostScreen = ({ onLayout, setAuth, setAddress, address }) => {
       <NestedScreen.Screen name="Comments" component={CommentsScreen} />
       <NestedScreen.Screen
         name="Map"
-        options={({ navigation, route: { params } }) => ({
+        options={({ navigation, }) => ({
           headerTitle: (props) => <HeaderTitle {...props} title={"Map"} />,
           headerTitleAlign: "center",
           headerStyle: styles.headerScreen,
@@ -38,10 +38,7 @@ const PostScreen = ({ onLayout, setAuth, setAddress, address }) => {
             <TouchableOpacity
               style={{ marginLeft: 16 }}
               onPress={() => {
-                console.log("Go back");
-                navigation.navigate(
-                  params?.nameScreen ? params.nameScreen : "DefaultScreen"
-                );
+                navigation.navigate("DefaultScreen");
               }}
             >
               <ArrowLeft />
