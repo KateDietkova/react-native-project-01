@@ -19,29 +19,36 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
-  const [photo, setPhoto] = useState("");
+  const [photo, setPhoto] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const takePhoto = async () => {
-    if (cameraRef) {
-      const photo = await cameraRef.takePictureAsync();
-      await MediaLibrary.createAssetAsync(photo.uri);
-      setPhoto(photo);
-      console.log(photo.uri);
+    try {
+      if (cameraRef) {
+        const photo = await cameraRef.takePictureAsync();
+        await MediaLibrary.createAssetAsync(photo.uri);
+        setPhoto(photo);
+      }
+    } catch (error) {
+      console.log("Error in takePhoto");
     }
   };
 
+  console.log(photo);
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      await MediaLibrary.requestPermissionsAsync();
+      try {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        await MediaLibrary.requestPermissionsAsync();
 
-      setHasPermission(status === "granted");
+        setHasPermission(status === "granted");
+      } catch (error) {
+        console.log("Error in useEffect requestCameraPermission", error);
+      }
     })();
 
     navigation.addListener("focus", () => setIsLoading(true));
     navigation.addListener("blur", () => setIsLoading(false));
-    // return () => {};
   }, []);
 
   if (hasPermission === null) {
@@ -58,6 +65,7 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
           <View style={styles.createPostContainer} onLayout={onLayout}>
             <View>
               <View style={styles.addPhotoContainer}>
+
                 {isLoading && (
                   <Camera
                     style={{ flex: 1 }}
@@ -70,58 +78,69 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
                       <View style={styles.photoContainer}>
                         <Image
                           style={styles.photo}
-                          source={{ uri: photo.uri }}
+                          source={{ uri: photo?.uri }}
                         />
                       </View>
-
-                      {photo ? (
-                        <TouchableOpacity
-                          style={styles.deleteButton}
-                          onPress={() => {
-                            setPhoto("");
-                          }}
-                        >
-                          <DeleteIcon name="delete-outline" size={24} />
-                        </TouchableOpacity>
-                      ) : (
-                        <TouchableOpacity
-                          style={styles.flipContainer}
-                          onPress={() => {
-                            setType(
-                              type === Camera.Constants.Type.back
-                                ? Camera.Constants.Type.front
-                                : Camera.Constants.Type.back
-                            );
-                          }}
-                        >
-                          <Text
-                            style={{
-                              fontSize: 18,
-                              color: "white",
-                            }}
-                          >
-                            Flip
-                          </Text>
-                        </TouchableOpacity>
-                      )}
-
-                      <TouchableOpacity
-                        style={
-                          photo.uri
-                            ? {
-                                ...styles.addPhotoBtn,
-                              opacity: 0.3,
-                              }
-                            : styles.addPhotoBtn
-                        }
-                        onPress={takePhoto}
-                        disabled={photo.uri}
-                      >
-                        <CameraIcon color={ photo.uri ? "#fff" :"#BDBDBD"} />
-                      </TouchableOpacity>
                     </View>
                   </Camera>
                 )}
+
+
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 90,
+                    left: "60%",
+                    transform: [{ translateX: -50 }],
+                  }}
+                >
+                  <TouchableOpacity
+                    style={
+                      photo.uri
+                        ? {
+                            ...styles.addPhotoBtn,
+                            opacity: 0.3,
+                          }
+                        : styles.addPhotoBtn
+                    }
+                    onPress={takePhoto}
+                    disabled={photo?.uri}
+                  >
+                    <CameraIcon color={photo.uri ? "#fff" : "#BDBDBD"} />
+                  </TouchableOpacity>
+                </View>
+
+                {photo.uri ? (
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => {
+                      setPhoto("");
+                    }}
+                  >
+                    <DeleteIcon name="delete-outline" size={24} />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.flipContainer}
+                    onPress={() => {
+                      setType(
+                        type === Camera.Constants.Type.back
+                          ? Camera.Constants.Type.front
+                          : Camera.Constants.Type.back
+                      );
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        color: "white",
+                      }}
+                    >
+                      Flip
+                    </Text>
+                  </TouchableOpacity>
+                )}
+
               </View>
               <Text style={styles.addPhotoText}>Upload photo</Text>
             </View>
@@ -146,13 +165,15 @@ const styles = StyleSheet.create({
     paddingTop: 32,
   },
   addPhotoContainer: {
+    flex: 1,
     paddingHorizontal: 16,
+    position: "relative",
   },
   addPhoto: {
     position: "relative",
     flex: 1,
 
-    paddingVertical: 90,
+    height: 240,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -176,7 +197,7 @@ const styles = StyleSheet.create({
   flipContainer: {
     position: "absolute",
     bottom: 5,
-    right: 2,
+    right: 20,
     borderWidth: 1,
     borderColor: "#BDBDBD",
     paddingHorizontal: 15,
@@ -190,18 +211,18 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     flex: 1,
-    height: 400,
-    width: 400,
+    height: 240,
+    width: 360,
   },
   photo: {
-    height: 400,
-    width: 400,
+    height: 240,
+    width: 360,
   },
 
   deleteButton: {
     position: "absolute",
     bottom: 5,
-    right: 2,
+    right: 20,
     paddingHorizontal: 10,
     paddingVertical: 6,
     backgroundColor: "#F6F6F6",

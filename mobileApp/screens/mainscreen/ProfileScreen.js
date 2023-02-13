@@ -149,7 +149,6 @@ const styles = StyleSheet.create({
 
   post: {
     flex: 1,
-    // maxHeight: 300,
     width: "100%",
     marginTop: 32,
   },

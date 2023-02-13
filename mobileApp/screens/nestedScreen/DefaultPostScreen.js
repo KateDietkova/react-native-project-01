@@ -50,9 +50,7 @@ const DefaultScreen = ({ onLayout, route, navigation }) => {
             renderItem={({ item, index }) => (
               <PostItem key={index} post={item} navigation={navigation} />
             )}
-            keyExtractor={(item, indx) => {
-              indx.toString();
-            }}
+            keyExtractor={(item, indx) => indx.toString()}
           />
         )}
       </View>
