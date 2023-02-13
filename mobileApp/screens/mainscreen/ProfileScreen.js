@@ -208,7 +208,8 @@ const styles = StyleSheet.create({
   },
   photoContainer: {
     position: "absolute",
-    left: 160,
+    transform: [{ translateX: -50 }],
+    left: "50%",
     top: -60,
     borderRadius: 16,
     backgroundColor: "#F6F6F6",

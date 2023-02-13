@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  Dimensions,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import CustomIcon from "../../src/components/icons/AddIcon";
@@ -21,12 +22,7 @@ const initialState = {
   password: "",
 };
 
-export default function RegistrationScreen({
-  options,
-  navigation,
-  onLayout,
-  setAuth,
-}) {
+export default function RegistrationScreen({ navigation, onLayout, setAuth }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [inputName, setInputName] = useState("");
   const [showPassword, setShowPassword] = useState(true);
@@ -72,18 +68,16 @@ export default function RegistrationScreen({
       <View style={styles.container} onLayout={onLayout}>
         <ImageBackground
           style={{
-            ...styles.image,
-            marginBottom: isShowKeyboard ? -300 : -50,
+            ...styles.imageContainer,
           }}
+          imageStyle={styles.image}
           source={require("../../assets/images/bg-auth.png")}
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : null}
-          >
+          <KeyboardAvoidingView>
             <View
               style={{
                 ...styles.form,
-                marginBottom: isShowKeyboard ? 150 : 50,
+                marginBottom: isShowKeyboard ? -150 : 0,
               }}
             >
               <View style={styles.photoContainer}>
@@ -190,13 +184,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  image: {
+
+  imageContainer: {
     flex: 1,
-    resizeMode: "cover",
+    position: "relative",
     justifyContent: "flex-end",
-    // justifyContent: "center",
-    // alignItems: "center",
   },
+  image: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
+    resizeMode: "stretch",
+    position: "absolute",
+    top: 0,
+  },
+
   input: {
     borderWidth: 1,
     borderColor: "#E8E8E8",
@@ -300,7 +301,8 @@ const styles = StyleSheet.create({
   },
   photoContainer: {
     position: "absolute",
-    left: 160,
+    transform: [{ translateX: -50 }],
+    left: "50%",
     top: -60,
     borderRadius: 16,
     backgroundColor: "#F6F6F6",

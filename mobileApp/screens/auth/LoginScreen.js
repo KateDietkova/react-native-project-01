@@ -10,6 +10,8 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  Dimensions,
+  ScrollView,
 } from "react-native";
 
 const initialState = {
@@ -17,7 +19,7 @@ const initialState = {
   password: "",
 };
 // onLayout;
-export default function RegistrationScreen({ options, navigation, onLayout, setAuth }) {
+export default function LoginScreen({ navigation, onLayout, setAuth }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [inputName, setInputName] = useState("");
   const [showPassword, setShowPassword] = useState(true);
@@ -48,8 +50,6 @@ export default function RegistrationScreen({ options, navigation, onLayout, setA
     setInputName("");
     setShowPassword(true);
     Keyboard.dismiss();
-    console.log(state);
-    // setState(initialState);
   };
 
   const onSingUp = () => {
@@ -62,20 +62,16 @@ export default function RegistrationScreen({ options, navigation, onLayout, setA
       <View style={styles.container} onLayout={onLayout}>
         <ImageBackground
           style={{
-            ...styles.image,
-            marginBottom: isShowKeyboard ? -300 : -50,
+            ...styles.imageContainer,
           }}
+          imageStyle={styles.image}
           source={require("../../assets/images/bg-auth.png")}
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "padding"}
-            enabled={true}
-            keyboardVerticalOffset={0}
-          >
+          <KeyboardAvoidingView>
             <View
               style={{
                 ...styles.form,
-                marginBottom: isShowKeyboard ? -250 : 30,
+                marginBottom: isShowKeyboard ? -230 : 0,
               }}
             >
               <View style={styles.header}>
@@ -115,7 +111,10 @@ export default function RegistrationScreen({ options, navigation, onLayout, setA
                   }}
                   value={state.password}
                   onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, password: value }))
+                    setState((prevState) => ({
+                      ...prevState,
+                      password: value,
+                    }))
                   }
                 />
                 <TouchableOpacity
@@ -162,13 +161,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  image: {
+  imageContainer: {
     flex: 1,
-    resizeMode: "contain",
+    position: "relative",
     justifyContent: "flex-end",
-    // justifyContent: "center",
-    // alignItems: "center",
   },
+  image: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
+    resizeMode: "stretch",
+    position: "absolute",
+    top: 0,
+  },
+
   input: {
     borderWidth: 1,
     borderColor: "#E8E8E8",
