@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StyleSheet, View } from "react-native";
 import ArrowLeft from "../../src/components/icons/ArrowLeftIcon";
@@ -16,13 +18,13 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const MainTab = createBottomTabNavigator();
 
 const Home = ({ onLayout, setAuth }) => {
-  // const [address, setAddress] = useState({});
+  const [isHideTabBar, setIsHideTabBar] = useState(false);
   return (
     <MainTab.Navigator
       initialRouteName="DefaultScreen"
       screenOptions={{
         tabBarShowLabel: false,
-        tabBarStyle: { height: 83, borderTopWidth: 1 },
+        tabBarStyle: { height: isHideTabBar ? 0 : 83, borderTopWidth: 1 },
       }}
     >
       <MainTab.Screen
@@ -47,7 +49,12 @@ const Home = ({ onLayout, setAuth }) => {
         })}
       >
         {(props) => (
-          <PostsScreen {...props} onLayout={onLayout} setAuth={setAuth} />
+          <PostsScreen
+            {...props}
+            onLayout={onLayout}
+            setAuth={setAuth}
+            isHideBar={setIsHideTabBar}
+          />
         )}
       </MainTab.Screen>
       <MainTab.Screen
@@ -95,6 +102,7 @@ const Home = ({ onLayout, setAuth }) => {
                       ...styles.tabBarIconWrapper,
                       backgroundColor: "none",
                       right: 55,
+                      top: isHideTabBar ? 10 : -9,
                     }
               }
             >

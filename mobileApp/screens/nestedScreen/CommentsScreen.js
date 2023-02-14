@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,11 +11,18 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
+import ArrowSend from "../../src/components/icons/ArrowUpSend";
 
-const CommentsScreen = ({ onLayout }) => {
+const CommentsScreen = ({ onLayout, route, isHideBar }) => {
   const [comment, setComment] = useState("");
+
+  useEffect(() => {
+    if (route.name === "Comments") {
+      isHideBar(true);
+    }
+  }, []);
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
         <View style={styles.commentsScreenContainer} onLayout={onLayout}>
           <View style={styles.imageContainer}>
@@ -24,42 +31,38 @@ const CommentsScreen = ({ onLayout }) => {
               source={require("../../assets/images/posts/postImage-1.png")}
             />
           </View>
-          <View style={styles.postCommentsWithBtnContainer}>
-            <View style={styles.postCommentsContainer}>
-              <View style={styles.commentItem}>
-                <Image
-                  style={styles.userPhoto}
-                  source={require("../../assets/images/userPhotoComment.png")}
-                />
-                <View style={styles.commentTextContainer}>
-                  <Text style={styles.commentText}>
-                    Really love your most recent photo. I’ve been trying to
-                    capture the same thing for a few months and would love some
-                    tips!
-                  </Text>
-                  <Text style={styles.commentTextData}>
-                    09 июня, 2020 | 08:40
-                  </Text>
-                </View>
+          <View style={styles.postCommentsContainer}>
+            <View style={styles.commentItem}>
+              <Image
+                style={styles.userPhoto}
+                source={require("../../assets/images/userPhotoComment.png")}
+              />
+              <View style={styles.commentTextContainer}>
+                <Text style={styles.commentText}>
+                  Really love your most recent photo. I’ve been trying to
+                  capture the same thing for a few months and would love some
+                  tips!
+                </Text>
+                <Text style={styles.commentTextData}>
+                  09 июня, 2020 | 08:40
+                </Text>
               </View>
             </View>
-            <KeyboardAvoidingView
-              style={{ flex: 1, justifyContent: "flex-end" }}
-            >
-              <View style={styles.commentForm}>
-                <TextInput
-                  style={styles.commentInput}
-                  onChangeText={(value) => setComment(value)}
-                  placeholder={"Comment..."}
-                  placeholderTextColor={"#bdbdbd"}
-                  value={comment}
-                />
-                <TouchableOpacity style={styles.commentBtnSend}>
-                  <Text>Button Comment</Text>
-                </TouchableOpacity>
-              </View>
-            </KeyboardAvoidingView>
           </View>
+          <KeyboardAvoidingView>
+            <View style={styles.commentForm}>
+              <TextInput
+                style={styles.commentInput}
+                onChangeText={(value) => setComment(value)}
+                placeholder={"Comment..."}
+                placeholderTextColor={"#bdbdbd"}
+                value={comment}
+              />
+              <TouchableOpacity style={styles.commentBtnSend}>
+                <ArrowSend />
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -72,8 +75,8 @@ const styles = StyleSheet.create({
   commentsScreenContainer: {
     flex: 1,
     paddingTop: 32,
-    backgroundColor: "violet",
-    height: Dimensions.get("window").height,
+    paddingBottom: 16,
+    height: Dimensions.get("window").height - 88,
   },
   imageContainer: {
     alignItems: "center",
@@ -85,18 +88,11 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width - 32,
   },
 
-  postCommentsWithBtnContainer: {
-    flex: 1,
-    justifyContent: "space-between",
-    // backgroundColor: "blue",
-  },
-
   postCommentsContainer: {
-    // flex: 1,
+    flex: 1,
     marginTop: 34,
     marginBottom: 31,
     paddingHorizontal: 16,
-    backgroundColor: "yellow",
   },
   commentItem: {
     flexDirection: "row",
@@ -124,13 +120,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   commentForm: {
-    flex: 1,
-    justifyContent: "flex-end",
+    position: "relative",
     paddingHorizontal: 16,
   },
   commentInput: {
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 14,
     backgroundColor: "#F6F6F6",
     borderColor: "#E8E8E8",
     borderStyle: "solid",
@@ -138,5 +133,20 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     fontSize: 16,
     lineHeight: 19,
+  },
+
+  commentBtnSend: {
+    position: "absolute",
+    // width: 34,
+    // height: 34,
+    top: "50%",
+    transform: [{translateY: -18}],
+    right: 25,
+    backgroundColor: "#FF6C00",
+    borderRadius: 50,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
