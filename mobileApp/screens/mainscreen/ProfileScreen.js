@@ -16,7 +16,6 @@ import CloseIcon from "../../src/components/icons/CloseIcon";
 import Logout from "../../src/components/icons/LogoutIcon";
 
 const ProfileScreen = ({ onLayout, setAuth }) => {
-  console.log("ProfileScreen");
   return (
     <SafeAreaView>
       <ScrollView>
