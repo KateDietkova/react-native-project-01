@@ -13,6 +13,8 @@ import {
 } from "react-native";
 import ArrowSend from "../../src/components/icons/ArrowUpSend";
 
+const screenHeight = Dimensions.get("window").height;
+
 const CommentsScreen = ({ onLayout, route, isHideBar }) => {
   const [comment, setComment] = useState("");
 
@@ -76,7 +78,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 32,
     paddingBottom: 16,
-    height: Dimensions.get("window").height - 88,
+    height: screenHeight - screenHeight / 100 * 8,
   },
   imageContainer: {
     alignItems: "center",
@@ -137,10 +139,8 @@ const styles = StyleSheet.create({
 
   commentBtnSend: {
     position: "absolute",
-    // width: 34,
-    // height: 34,
     top: "50%",
-    transform: [{translateY: -18}],
+    transform: [{ translateY: -18 }],
     right: 25,
     backgroundColor: "#FF6C00",
     borderRadius: 50,
