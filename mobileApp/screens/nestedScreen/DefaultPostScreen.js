@@ -10,8 +10,7 @@ import {
 
 import { PostItem } from "../../src/components/pagesComponents/PostItem";
 
-const DefaultScreen = ({ onLayout, route, navigation }) => {
-  console.log(route.params);
+const DefaultScreen = ({ onLayout, route, navigation, hide }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -20,7 +19,6 @@ const DefaultScreen = ({ onLayout, route, navigation }) => {
     }
   }, [route.params]);
 
-  console.log(posts);
   return (
     <SafeAreaView
       style={{
@@ -28,32 +26,34 @@ const DefaultScreen = ({ onLayout, route, navigation }) => {
         backgroundColor: "#FFFFFF",
       }}
     >
-      <View style={styles.postScreenContainer} onLayout={onLayout}>
-        {posts && (
-          <FlatList
-            style={{ paddingHorizontal: 16 }}
-            ListHeaderComponent={
-              <>
-                <View style={styles.userInfoContainer}>
-                  <Image
-                    style={styles.userPhoto}
-                    source={require("../../assets/images/userPhoto.png")}
-                  />
-                  <View style={styles.userInfo}>
-                    <Text style={styles.userName}>Natali Romanova</Text>
-                    <Text style={styles.userEmail}>email@example.com</Text>
+      {!hide && (
+        <View style={styles.postScreenContainer} onLayout={onLayout}>
+          {posts && (
+            <FlatList
+              style={{ paddingHorizontal: 16 }}
+              ListHeaderComponent={
+                <>
+                  <View style={styles.userInfoContainer}>
+                    <Image
+                      style={styles.userPhoto}
+                      source={require("../../assets/images/userPhoto.png")}
+                    />
+                    <View style={styles.userInfo}>
+                      <Text style={styles.userName}>Natali Romanova</Text>
+                      <Text style={styles.userEmail}>email@example.com</Text>
+                    </View>
                   </View>
-                </View>
-              </>
-            }
-            data={posts}
-            renderItem={({ item, index }) => (
-              <PostItem key={index} post={item} navigation={navigation} />
-            )}
-            keyExtractor={(item, indx) => indx.toString()}
-          />
-        )}
-      </View>
+                </>
+              }
+              data={posts}
+              renderItem={({ item, index }) => (
+                <PostItem key={index} post={item} navigation={navigation} />
+              )}
+              keyExtractor={(item, indx) => indx.toString()}
+            />
+          )}
+        </View>
+      )}
     </SafeAreaView>
   );
 };

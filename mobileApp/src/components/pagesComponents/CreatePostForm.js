@@ -18,8 +18,6 @@ const initialState = {
   location: "",
 };
 
-
-
 export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
   const [locationMap, setLocationMap] = useState({});
   const [inputName, setInputName] = useState("");
@@ -42,7 +40,6 @@ export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
           latitude: location.coords.latitude ? location.coords.latitude : 0,
           longitude: location.coords.longitude ? location.coords.longitude : 0,
         };
-        console.log(coords);
         setLocationMap(coords);
       } catch (error) {
         console.log("Error in set coordinate", error);
@@ -54,7 +51,6 @@ export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
 
   const checkBtnDisabled = () => {
     if (state.title !== "" && state.location !== "") {
-      console.log(state);
       setIsDisabled(false);
       return;
     } else {
@@ -63,7 +59,6 @@ export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
   };
 
   const onPublish = () => {
-    console.log("Description image:", state);
     navigation.navigate("DefaultScreen", { locationMap, uri, ...state });
     setIsDisabled(true);
     setState(initialState);

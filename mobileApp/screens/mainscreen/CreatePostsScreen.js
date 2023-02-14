@@ -34,7 +34,6 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
     }
   };
 
-  console.log(photo);
   useEffect(() => {
     (async () => {
       try {

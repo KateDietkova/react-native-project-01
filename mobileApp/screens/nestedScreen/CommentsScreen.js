@@ -22,6 +22,10 @@ const CommentsScreen = ({ onLayout, route, isHideBar }) => {
     if (route.name === "Comments") {
       isHideBar(true);
     }
+
+    return (() => {
+      isHideBar(false);
+    })
   }, []);
   return (
     <SafeAreaView style={{ flex: 1 }}>

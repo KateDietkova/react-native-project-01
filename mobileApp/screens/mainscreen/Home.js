@@ -24,7 +24,7 @@ const Home = ({ onLayout, setAuth }) => {
       initialRouteName="DefaultScreen"
       screenOptions={{
         tabBarShowLabel: false,
-        tabBarStyle: { height: isHideTabBar ? 0 : 83, borderTopWidth: 1 },
+        tabBarStyle: { display: isHideTabBar ? "none" : "flex", height: 83, borderTopWidth: 1},
       }}
     >
       <MainTab.Screen
@@ -54,6 +54,7 @@ const Home = ({ onLayout, setAuth }) => {
             onLayout={onLayout}
             setAuth={setAuth}
             isHideBar={setIsHideTabBar}
+            hide={isHideTabBar}
           />
         )}
       </MainTab.Screen>
@@ -102,7 +103,6 @@ const Home = ({ onLayout, setAuth }) => {
                       ...styles.tabBarIconWrapper,
                       backgroundColor: "none",
                       right: 55,
-                      top: isHideTabBar ? 10 : -9,
                     }
               }
             >

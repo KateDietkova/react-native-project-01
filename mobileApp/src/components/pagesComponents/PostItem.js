@@ -3,7 +3,7 @@ import CommentIcon from "../icons/CommentIcon";
 import LocationIcon from "../icons/LocationIcon";
 
 export const PostItem = ({ post, navigation }) => {
-  console.log(post);
+
   return (
     <View style={styles.postItemContainer}>
       <View style={styles.postItem}>
