@@ -14,8 +14,11 @@ import LikesIcon from "../../src/components/icons/LikesIcon";
 import CustomIcon from "../../src/components/icons/AddIcon";
 import CloseIcon from "../../src/components/icons/CloseIcon";
 import Logout from "../../src/components/icons/LogoutIcon";
+import { useDispatch } from "react-redux";
+import { authSignOutUser } from "../../redux/auth/authOperations";
 
 const ProfileScreen = ({ onLayout, setAuth }) => {
+  const dispatch = useDispatch();
   return (
     <SafeAreaView>
       <ScrollView>
@@ -40,7 +43,7 @@ const ProfileScreen = ({ onLayout, setAuth }) => {
                 </View>
                 <TouchableOpacity
                   style={styles.logoutBtn}
-                  onPress={() => setAuth(false)}
+                  onPress={() => dispatch(authSignOutUser())}
                 >
                   {/* <CustomIcon style={styles.addIcon} /> */}
                   <Logout style={styles.logoutIcon} />

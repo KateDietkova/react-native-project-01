@@ -9,15 +9,47 @@ import {
 } from "react-native";
 
 import { PostItem } from "../../src/components/pagesComponents/PostItem";
+import { useSelector } from "react-redux";
+import { selectNickname, selectEmail } from "../../redux/auth/authSelectors";
+import { db } from "../../firebase/config";
+import { collection, query, onSnapshot, getDocs } from "firebase/firestore";
 
 const DefaultScreen = ({ onLayout, route, navigation, hide }) => {
   const [posts, setPosts] = useState([]);
+  const userName = useSelector(selectNickname);
+  const userEmail = useSelector(selectEmail);
+
+  const getAllPosts = async () => {
+    //  const querySnapshot = await getDocs(collection(db, "posts"));
+    //  querySnapshot.forEach((doc) => {
+    //    // doc.data() is never undefined for query doc snapshots
+    //    posts.push(doc.data());
+    //  });
+  };
 
   useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
-    }
-  }, [route.params]);
+    (async () => {
+      console.log(Date.now());
+      const q = query(collection(db, "posts"));
+      // const filteredByCreatedTime = [];
+      const unsubscribe = onSnapshot(q, (docs) => {
+        docs.forEach((doc) => {
+          console.log("Posts", posts);
+          const isPost = posts.filter((post) => post.id === doc.id);
+          console.log(isPost);
+          if (isPost.length === 0) {
+            posts.push({ id: doc.id, ...doc.data() });
+          }
+        });
+        posts.sort(
+          (firstPost, secondPost) => secondPost.createAt - firstPost.createAt
+        );
+      });
+      setPosts(posts);
+    })();
+  }, []);
+
+  console.log(posts);
 
   return (
     <SafeAreaView
@@ -39,8 +71,8 @@ const DefaultScreen = ({ onLayout, route, navigation, hide }) => {
                       source={require("../../assets/images/userPhoto.png")}
                     />
                     <View style={styles.userInfo}>
-                      <Text style={styles.userName}>Natali Romanova</Text>
-                      <Text style={styles.userEmail}>email@example.com</Text>
+                      <Text style={styles.userName}>{userName}</Text>
+                      <Text style={styles.userEmail}>{userEmail}</Text>
                     </View>
                   </View>
                 </>

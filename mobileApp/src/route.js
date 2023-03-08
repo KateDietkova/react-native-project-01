@@ -1,12 +1,11 @@
-
 import LoginScreen from "../screens/auth/LoginScreen";
 import RegistrationScreen from "../screens/auth/RegistrationScreen";
 import Home from "../screens/mainscreen/Home";
 import { createStackNavigator } from "@react-navigation/stack";
 const MainStack = createStackNavigator();
 
-export const useRoute = (isAuth, layoutFontsFunc, setIsAuth) => {
-  if (!isAuth) {
+export const useRoute = (stateChange, layoutFontsFunc, setIsAuth) => {
+  if (!stateChange) {
     return (
       <MainStack.Navigator initialRouteName="Login">
         <MainStack.Screen
@@ -41,5 +40,5 @@ export const useRoute = (isAuth, layoutFontsFunc, setIsAuth) => {
       </MainStack.Navigator>
     );
   }
-  return <Home onLayout={layoutFontsFunc} setAuth={setIsAuth} />;
+  return <>{stateChange && <Home onLayout={layoutFontsFunc} setAuth={setIsAuth} />}</>;
 };

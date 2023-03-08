@@ -11,10 +11,17 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Dimensions,
+  Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import CustomIcon from "../../src/components/icons/AddIcon";
 import CloseIcon from "../../src/components/icons/CloseIcon";
+import { authSignUpUser } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
+import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+import { storage } from "../../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const initialState = {
   name: "",
@@ -23,10 +30,14 @@ const initialState = {
 };
 
 export default function RegistrationScreen({ navigation, onLayout, setAuth }) {
+  const [cameraRef, setCameraRef] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.front);
+  const [photo, setPhoto] = useState({});
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [inputName, setInputName] = useState("");
   const [showPassword, setShowPassword] = useState(true);
   const [state, setState] = useState(initialState);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -48,6 +59,37 @@ export default function RegistrationScreen({ navigation, onLayout, setAuth }) {
     };
   }, []);
 
+  const takePhoto = async () => {
+    try {
+      if (cameraRef) {
+        const photo = await cameraRef.takePictureAsync();
+        await MediaLibrary.createAssetAsync(photo.uri);
+        setPhoto(photo);
+      }
+    } catch (error) {
+      console.log("Error in takePhoto");
+    }
+  };
+
+  const uploadUserPhotoToServer = async () => {
+    try {
+      const result = await fetch(photo.uri);
+      console.log("response", result);
+      const photoFile = await result.blob();
+
+      const uniquePostId = Date.now().toString();
+      const storageRef = ref(storage, `usersAvatars/${uniquePostId}`);
+      console.log(storageRef);
+
+      await uploadBytes(storageRef, photoFile);
+      const imagesRef = ref(storageRef);
+
+      const processedPhoto = await getDownloadURL(imagesRef);
+      console.log("processedPhoto", processedPhoto);
+    } catch (error) {
+      console.log("Error in upload", error);
+    }
+  };
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     setInputName("");
@@ -56,10 +98,12 @@ export default function RegistrationScreen({ navigation, onLayout, setAuth }) {
   };
 
   const onSingUp = () => {
+    uploadUserPhotoToServer();
     console.log(
       "Credentials",
       `${state.name} + ${state.email} + ${state.password}`
     );
+    dispatch(authSignUpUser({ ...state, avatar: photo.uri }));
     setAuth(true);
   };
 
@@ -81,7 +125,33 @@ export default function RegistrationScreen({ navigation, onLayout, setAuth }) {
               }}
             >
               <View style={styles.photoContainer}>
-                <CustomIcon style={styles.addIcon} />
+                <Camera
+                  style={{ flex: 1 }}
+                  type={type}
+                  ref={(ref) => {
+                    setCameraRef(ref);
+                  }}
+                >
+                  <View style={styles.photoWrapper}>
+                    <Image style={styles.photo} source={{ uri: photo?.uri }} />
+                  </View>
+                </Camera>
+                {photo.uri ? (
+                  <TouchableOpacity
+                    style={styles.removeIcon}
+                    onPress={() => setPhoto("")}
+                  >
+                    <CloseIcon />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.addBtnIcon}
+                    onPress={takePhoto}
+                  >
+                    <CustomIcon />
+                  </TouchableOpacity>
+                )}
+
                 {/* <CloseIcon style={styles.removeIcon}/> */}
               </View>
               <View style={styles.header}>
@@ -305,11 +375,11 @@ const styles = StyleSheet.create({
     left: "50%",
     top: -60,
     borderRadius: 16,
-    backgroundColor: "#F6F6F6",
+    // backgroundColor: "#F6F6F6",
     width: 120,
     height: 120,
   },
-  addIcon: {
+  addBtnIcon: {
     position: "absolute",
     top: 75,
     right: -16,
@@ -319,5 +389,19 @@ const styles = StyleSheet.create({
     top: 75,
     right: -16,
     color: "#E8E8E8",
+  },
+
+  photoWrapper: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    flex: 1,
+    height: 120,
+    width: 120,
+    borderRadius: 15,
+  },
+  photo: {
+    height: 120,
+    width: 120,
   },
 });

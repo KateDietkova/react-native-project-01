@@ -1,7 +1,11 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { authSignOutUser } from "../../../redux/auth/authOperations";
 
 export const IconBtn = ({ icon: Icon, navigate, setAuth }) => {
+  const dispatch = useDispatch();
+  
   const navigationCustom = () => {
     if (navigate) {
       return (
@@ -15,7 +19,7 @@ export const IconBtn = ({ icon: Icon, navigate, setAuth }) => {
   return (
     <TouchableOpacity
       style={styles.headerBtn}
-      onPress={navigate ? null : () => setAuth(false)}
+      onPress={navigate ? null : () => dispatch(authSignOutUser())}
     >
       {navigationCustom()}
     </TouchableOpacity>

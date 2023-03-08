@@ -14,6 +14,10 @@ import DeleteIcon from "react-native-vector-icons/MaterialIcons";
 import { CreatePostForm } from "../../src/components/pagesComponents/CreatePostForm";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
+import { storage, db } from "../../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
+import { useSelector } from "react-redux";
 
 const CreatePostScreen = ({ onLayout, navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -21,6 +25,8 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [photo, setPhoto] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [processedPhoto, setProcessedPhoto] = useState("");
+  const { userId, nickName } = useSelector((state) => state.auth);
 
   const takePhoto = async () => {
     try {
@@ -31,6 +37,40 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
       }
     } catch (error) {
       console.log("Error in takePhoto");
+    }
+  };
+
+  const uploadPostToServer = async ({ locationMap, uri, ...state }) => {
+    try {
+      const createPosts = await addDoc(collection(db, "posts"), {
+        locationMap,
+        uri,
+        userId,
+        nickName,
+        ...state,
+      });
+    } catch (error) {
+      console.log("In uploadPostToServer", error);
+    }
+  };
+
+  const uploadPhotoToServer = async () => {
+    try {
+      const result = await fetch(photo.uri);
+      // console.log("response", result);
+      const photoFile = await result.blob();
+
+      const uniquePostId = Date.now().toString();
+      const storageRef = ref(storage, `postImages/${uniquePostId}`);
+
+      await uploadBytes(storageRef, photoFile);
+      const imagesRef = ref(storageRef);
+
+      const processedPhoto = await getDownloadURL(imagesRef);
+      setProcessedPhoto(processedPhoto);
+      // console.log("processedPhoto", processedPhoto);
+    } catch (error) {
+      console.log("Error in upload", error);
     }
   };
 
@@ -64,7 +104,6 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
           <View style={styles.createPostContainer} onLayout={onLayout}>
             <View>
               <View style={styles.addPhotoContainer}>
-
                 {isLoading && (
                   <Camera
                     style={{ flex: 1 }}
@@ -83,7 +122,6 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
                     </View>
                   </Camera>
                 )}
-
 
                 <View
                   style={{
@@ -139,14 +177,16 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
                     </Text>
                   </TouchableOpacity>
                 )}
-
               </View>
               <Text style={styles.addPhotoText}>Upload photo</Text>
             </View>
             <CreatePostForm
-              photo={photo}
+              photo={processedPhoto}
               navigation={navigation}
               setPhoto={setPhoto}
+              uploadPhotoToServer={uploadPhotoToServer}
+              uploadPostToServer={uploadPostToServer}
+              setProcessedPhoto={setProcessedPhoto}
             />
           </View>
         </TouchableWithoutFeedback>

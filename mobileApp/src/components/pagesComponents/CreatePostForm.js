@@ -18,13 +18,20 @@ const initialState = {
   location: "",
 };
 
-export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
+export const CreatePostForm = ({
+  photo,
+  navigation,
+  setPhoto,
+  uploadPhotoToServer,
+  uploadPostToServer,
+  setProcessedPhoto,
+}) => {
   const [locationMap, setLocationMap] = useState({});
   const [inputName, setInputName] = useState("");
   const [state, setState] = useState(initialState);
   const [isDisabled, setIsDisabled] = useState(true);
   const headerHeight = useHeaderHeight();
-  const { uri } = photo;
+  const uri = photo;
 
   useEffect(() => {
     const getLocation = async () => {
@@ -59,10 +66,13 @@ export const CreatePostForm = ({ photo, navigation, setPhoto }) => {
   };
 
   const onPublish = () => {
+    uploadPostToServer({ locationMap, uri, createAt: Date.now(), ...state });
     navigation.navigate("DefaultScreen", { locationMap, uri, ...state });
+    uploadPhotoToServer();
     setIsDisabled(true);
     setState(initialState);
     setPhoto("");
+    setProcessedPhoto("");
   };
 
   return (

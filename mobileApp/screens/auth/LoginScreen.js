@@ -14,6 +14,9 @@ import {
   ScrollView,
 } from "react-native";
 
+import { authSignInUser } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
+
 const initialState = {
   email: "",
   password: "",
@@ -24,6 +27,7 @@ export default function LoginScreen({ navigation, onLayout, setAuth }) {
   const [inputName, setInputName] = useState("");
   const [showPassword, setShowPassword] = useState(true);
   const [state, setState] = useState(initialState);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -53,6 +57,7 @@ export default function LoginScreen({ navigation, onLayout, setAuth }) {
   };
 
   const onSingUp = () => {
+    dispatch(authSignInUser(state));
     console.log("Credentials", `${state.email} + ${state.password}`);
     setAuth(true);
   };
