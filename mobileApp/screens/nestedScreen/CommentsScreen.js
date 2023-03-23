@@ -28,11 +28,10 @@ const screenHeight = Dimensions.get("window").height;
 const CommentsScreen = ({ onLayout, route, isHideBar }) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
-  const { postId, userId, ownerNickName, postImage } = route.params;
+  const { postId, postImage } = route.params;
   const currentUserId = useSelector(selectCurrentUserId);
   const currentNickName = useSelector(selectNickname);
   const currentUserAvatar = useSelector(selectCurrentUserAvatar);
-  console.log("Comments", comments);
 
   const createComments = async () => {
     const createComment = await addDoc(
@@ -50,49 +49,6 @@ const CommentsScreen = ({ onLayout, route, isHideBar }) => {
     );
     setComment("");
   };
-
-  // const getAllComments = async () => {
-  //   try {
-  //     const q = query(collection(db, "posts", postId, "comments"));
-  //     const unsubscribe = await onSnapshot(q, (docs) => {
-  //       docs.forEach((doc) => {
-  //         console.log("Doc", doc);
-  //         const isComment = comments.filter((comment) => comment.id === doc.id);
-  //         if (isComment.length === 0) {
-
-  //           comments.push({ id: doc.id, ...doc.data() });
-  //         }
-  //       });
-  //       comments.sort(
-  //         (firstComment, secondComment) =>
-  //           firstComment.createAt - secondComment.createAt
-  //       );
-  //     });
-  //     setComments(comments);
-  //   } catch (error) {
-  //     console.log("Error in getAllComments in CommebtScreen", error);
-  //   }
-  // };
-
-  // const getAllComments = async () => {
-  //   const q = await query(collection(db, "posts", postId, "comments"));
-  //   const unsubscribe = await onSnapshot(q, (docs) => {
-  //     docs.forEach((doc) => {
-  //       console.log("Doc", doc);
-  //       const isComment = comments.filter((comment) => comment.id === doc.id);
-  //       console.log("isComment", isComment);
-  //       if (isComment.length === 0) {
-  //         comments.push({ id: doc.id, ...doc.data() });
-  //       }
-  //     });
-  //     comments.sort(
-  //       (firstComment, secondComment) =>
-  //         firstComment.createAt - secondComment.createAt
-  //     );
-  //     console.log(comments);
-  //     setComments(comments);
-  //   });
-  // }
 
   useEffect(() => {
     if (route.name === "Comments") {
@@ -112,27 +68,23 @@ const CommentsScreen = ({ onLayout, route, isHideBar }) => {
         const isComment = comments.filter((comment) => comment.id === doc.id);
         console.log("isComment", isComment);
         if (isComment.length === 0) {
-          // console.log("Doc", doc.data());
-           setComments((prevState) => [
-             ...prevState,
-             { id: doc.id, ...doc.data() },
-           ]);
-          // comments.push({ id: doc.id, ...doc.data() });
+          setComments((prevState) => [
+            ...prevState,
+            { id: doc.id, ...doc.data() },
+          ]);
         }
       });
-      comments.sort(
-        (firstComment, secondComment) =>
-          firstComment.createAt - secondComment.createAt
-      );
-      // console.log("Inside", comments);
-      // setComments(comments);
     });
 
     return () => {
       unsubscribe();
     };
   }, [Date.now()]);
-  console.log("Before return comments", comments);
+  comments.sort(
+    (firstComment, secondComment) =>
+      firstComment.createAt - secondComment.createAt
+  );
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.commentsScreenContainer} onLayout={onLayout}>
