@@ -1,8 +1,37 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import CommentIcon from "../icons/CommentIcon";
 import LocationIcon from "../icons/LocationIcon";
+import { db } from "../../../firebase/config";
+import { collection, query, onSnapshot } from "firebase/firestore";
+import { useState, useEffect } from "react";
 
 export const PostItem = ({ post, navigation }) => {
+  const [comments, setComments] = useState([]);
+
+  const getAllComments = async () => {
+    try {
+      const q = query(collection(db, "posts", post.id, "comments"));
+      const unsubscribe = onSnapshot(q, (docs) => {
+        docs.forEach((doc) => {
+          const isComment = comments.filter((comment) => comment.id === doc.id);
+          if (isComment.length === 0) {
+            // console.log("Doc", doc);
+            comments.push({ id: doc.id, ...doc.data() });
+          }
+        });
+      });
+      setComments(comments);
+    } catch (error) {
+      console.log("Error in getAllComments PostItem", error);
+    }
+    
+  };
+
+  useEffect(() => {
+    (async () => {
+      await getAllComments();
+    })();
+  }, []);
 
   return (
     <View style={styles.postItemContainer}>
@@ -21,10 +50,25 @@ export const PostItem = ({ post, navigation }) => {
         <View style={styles.postInfoContainer}>
           <TouchableOpacity
             style={styles.commentBtn}
-            onPress={() => navigation.navigate("Comments")}
+            onPress={() =>
+              navigation.navigate("Comments", {
+                postId: post.id,
+                postImage: post.uri,
+                userId: post.userId,
+                ownerNickName: post.nickName,
+              })
+            }
           >
-            <CommentIcon />
-            <Text style={styles.commentAmount}>0</Text>
+            <CommentIcon commentsAmount={comments.length} />
+            <Text
+              style={
+                comments.length > 0
+                  ? { ...styles.commentAmount, color: "#212121" }
+                  : styles.commentAmount
+              }
+            >
+              {comments.length}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity

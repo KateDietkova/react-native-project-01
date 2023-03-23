@@ -25,7 +25,6 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [photo, setPhoto] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [processedPhoto, setProcessedPhoto] = useState("");
   const { userId, nickName } = useSelector((state) => state.auth);
 
   const takePhoto = async () => {
@@ -61,14 +60,16 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
       const photoFile = await result.blob();
 
       const uniquePostId = Date.now().toString();
-      const storageRef = ref(storage, `postImages/${uniquePostId}`);
+      const storageRef = await ref(storage, `postImages/${uniquePostId}`);
 
       await uploadBytes(storageRef, photoFile);
-      const imagesRef = ref(storageRef);
+      const imagesRef = await ref(storageRef);
 
-      const processedPhoto = await getDownloadURL(imagesRef);
-      setProcessedPhoto(processedPhoto);
-      // console.log("processedPhoto", processedPhoto);
+      // const processedPhoto = await getDownloadURL(imagesRef);
+      const downloadURLPromise = getDownloadURL(imagesRef);
+
+      const [processedPhoto] = await Promise.all([downloadURLPromise]);
+      return processedPhoto;
     } catch (error) {
       console.log("Error in upload", error);
     }
@@ -181,12 +182,10 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
               <Text style={styles.addPhotoText}>Upload photo</Text>
             </View>
             <CreatePostForm
-              photo={processedPhoto}
               navigation={navigation}
               setPhoto={setPhoto}
               uploadPhotoToServer={uploadPhotoToServer}
               uploadPostToServer={uploadPostToServer}
-              setProcessedPhoto={setProcessedPhoto}
             />
           </View>
         </TouchableWithoutFeedback>

@@ -10,67 +10,129 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   SafeAreaView,
+  FlatList,
 } from "react-native";
 import ArrowSend from "../../src/components/icons/ArrowUpSend";
+import { db } from "../../firebase/config";
+import { addDoc, collection, query, onSnapshot } from "firebase/firestore";
+import { useSelector } from "react-redux";
+import {
+  selectCurrentUserId,
+  selectNickname,
+  selectCurrentUserAvatar,
+} from "../../redux/auth/authSelectors";
+import { CommentItem } from "../../src/components/pagesComponents/CommentItem";
 
 const screenHeight = Dimensions.get("window").height;
 
 const CommentsScreen = ({ onLayout, route, isHideBar }) => {
   const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
+  const { postId, userId, ownerNickName, postImage } = route.params;
+  const currentUserId = useSelector(selectCurrentUserId);
+  const currentNickName = useSelector(selectNickname);
+  const currentUserAvatar = useSelector(selectCurrentUserAvatar);
+  console.log("Comments", comments);
+
+  const createComments = async () => {
+    const createComment = await addDoc(
+      collection(db, "posts", postId, "comments"),
+      {
+        postId,
+        ownerNickName: currentNickName,
+        ownerId: currentUserId,
+        createAt: Date.now(),
+        text: comment,
+        ownerAvatar: currentUserAvatar
+          ? currentUserAvatar
+          : "https://img.myloview.com/stickers/default-avatar-profile-icon-vector-social-media-user-photo-700-205577532.jpg",
+      }
+    );
+    setComment("");
+  };
+
+  const getAllComments = async () => {
+    try {
+      const q = query(collection(db, "posts", postId, "comments"));
+      const unsubscribe = onSnapshot(q, (docs) => {
+        docs.forEach((doc) => {
+          console.log("Doc", doc);
+          const isComment = comments.filter((comment) => comment.id === doc.id);
+          if (isComment.length === 0) {
+            
+            comments.push({ id: doc.id, ...doc.data() });
+          }
+        });
+        comments.sort(
+          (firstComment, secondComment) =>
+            firstComment.createAt - secondComment.createAt
+        );
+      });
+      setComments(comments);
+    } catch (error) {
+      console.log("Error in getAllComments in CommebtScreen", error);
+    }
+  };
 
   useEffect(() => {
     if (route.name === "Comments") {
       isHideBar(true);
     }
 
-    return (() => {
+    (async () => {
+      await getAllComments();
+    })();
+
+    return () => {
       isHideBar(false);
-    })
+    };
   }, []);
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
-        <View style={styles.commentsScreenContainer} onLayout={onLayout}>
-          <View style={styles.imageContainer}>
-            <Image
-              style={styles.postImage}
-              source={require("../../assets/images/posts/postImage-1.png")}
-            />
-          </View>
-          <View style={styles.postCommentsContainer}>
-            <View style={styles.commentItem}>
-              <Image
-                style={styles.userPhoto}
-                source={require("../../assets/images/userPhotoComment.png")}
-              />
-              <View style={styles.commentTextContainer}>
-                <Text style={styles.commentText}>
-                  Really love your most recent photo. I’ve been trying to
-                  capture the same thing for a few months and would love some
-                  tips!
-                </Text>
-                <Text style={styles.commentTextData}>
-                  09 июня, 2020 | 08:40
-                </Text>
+      <View style={styles.commentsScreenContainer} onLayout={onLayout}>
+        <FlatList
+          style={{
+            paddingHorizontal: 16,
+            flex: 1,
+          }}
+          ListHeaderComponent={
+            <>
+              <View style={styles.imageContainer}>
+                <Image
+                  style={styles.postImage}
+                  source={
+                    postImage
+                      ? { uri: postImage }
+                      : require("../../assets/images/posts/default_image.png")
+                  }
+                />
               </View>
-            </View>
-          </View>
-          <KeyboardAvoidingView>
-            <View style={styles.commentForm}>
-              <TextInput
-                style={styles.commentInput}
-                onChangeText={(value) => setComment(value)}
-                placeholder={"Comment..."}
-                placeholderTextColor={"#bdbdbd"}
-                value={comment}
-              />
-              <TouchableOpacity style={styles.commentBtnSend}>
-                <ArrowSend />
-              </TouchableOpacity>
-            </View>
-          </KeyboardAvoidingView>
+            </>
+          }
+          data={comments}
+          renderItem={({ item, index }) => (
+            <CommentItem key={index} comment={item} />
+          )}
+          keyExtractor={(item, indx) => indx.toString()}
+        />
+      </View>
+      <KeyboardAvoidingView>
+        <View style={styles.commentForm}>
+          <TextInput
+            style={styles.commentInput}
+            onChangeText={(value) => setComment(value)}
+            placeholder={"Comment..."}
+            placeholderTextColor={"#bdbdbd"}
+            value={comment}
+          />
+          <TouchableOpacity
+            style={styles.commentBtnSend}
+            onPress={() => createComments()}
+          >
+            <ArrowSend />
+          </TouchableOpacity>
         </View>
-      </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -82,11 +144,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 32,
     paddingBottom: 16,
-    height: screenHeight - screenHeight / 100 * 8,
+    height: screenHeight - (screenHeight / 100) * 8,
   },
   imageContainer: {
     alignItems: "center",
     paddingHorizontal: 16,
+    marginBottom: 34,
   },
   postImage: {
     borderRadius: 8,
@@ -96,9 +159,9 @@ const styles = StyleSheet.create({
 
   postCommentsContainer: {
     flex: 1,
-    marginTop: 34,
+    // marginTop: 34,
     marginBottom: 31,
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
   },
   commentItem: {
     flexDirection: "row",

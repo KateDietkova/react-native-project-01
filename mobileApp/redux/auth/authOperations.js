@@ -16,18 +16,21 @@ export const authSignUpUser =
     try {
       const auth = await getAuth(app);
       await createUserWithEmailAndPassword(auth, email, password);
+      console.log("Avatar", avatar);
 
       await updateProfile(auth.currentUser, {
         displayName: name,
+        photoURL: avatar,
       });
 
       const updateUserSuccess = auth.currentUser;
-
+      
       dispatch(
         updateUserProfile({
           userId: updateUserSuccess.uid,
           nickName: updateUserSuccess.displayName,
           email: updateUserSuccess.email,
+          avatar: updateUserSuccess.photoURL,
         })
       );
     } catch (error) {
@@ -46,6 +49,7 @@ export const authSignInUser =
           userId: user.uid,
           nickName: user.displayName,
           email: user.email,
+          avatar: user.photoURL,
         })
       );
       dispatch(

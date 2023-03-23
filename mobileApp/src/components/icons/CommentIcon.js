@@ -1,11 +1,11 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-const CommentIcon = (props) => (
+const CommentIcon = ({ commentsAmount, ...props }) => (
   <Svg
     width={24}
     height={24}
-    fill="none"
+    fill={commentsAmount > 0 ? "#FF6C00" : "none"}
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >

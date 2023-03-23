@@ -19,19 +19,16 @@ const initialState = {
 };
 
 export const CreatePostForm = ({
-  photo,
   navigation,
   setPhoto,
   uploadPhotoToServer,
   uploadPostToServer,
-  setProcessedPhoto,
 }) => {
   const [locationMap, setLocationMap] = useState({});
   const [inputName, setInputName] = useState("");
   const [state, setState] = useState(initialState);
   const [isDisabled, setIsDisabled] = useState(true);
   const headerHeight = useHeaderHeight();
-  const uri = photo;
 
   useEffect(() => {
     const getLocation = async () => {
@@ -65,14 +62,13 @@ export const CreatePostForm = ({
     }
   };
 
-  const onPublish = () => {
-    uploadPostToServer({ locationMap, uri, createAt: Date.now(), ...state });
-    navigation.navigate("DefaultScreen", { locationMap, uri, ...state });
-    uploadPhotoToServer();
+  const onPublish = async () => {
+    const uri = await uploadPhotoToServer();
+    await uploadPostToServer({ locationMap, uri, createAt: Date.now(), ...state });
+    navigation.navigate("DefaultScreen");
     setIsDisabled(true);
     setState(initialState);
     setPhoto("");
-    setProcessedPhoto("");
   };
 
   return (
@@ -142,8 +138,8 @@ export const CreatePostForm = ({
         <TouchableOpacity
           activeOpacity={0.8}
           style={isDisabled ? styles.btnDisabled : styles.btn}
-          onPress={() => {
-            onPublish();
+          onPress={async() => {
+            await onPublish();
           }}
           disabled={isDisabled}
         >

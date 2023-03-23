@@ -20,8 +20,12 @@ import { authSignUpUser } from "../../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
-import { storage } from "../../firebase/config";
+// import { storage } from "../../firebase/config";
+// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+import { storage, db } from "../../firebase/config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
 
 const initialState = {
   name: "",
@@ -79,13 +83,14 @@ export default function RegistrationScreen({ navigation, onLayout, setAuth }) {
 
       const uniquePostId = Date.now().toString();
       const storageRef = ref(storage, `usersAvatars/${uniquePostId}`);
-      console.log(storageRef);
+      console.log("StorageRef", storageRef);
 
       await uploadBytes(storageRef, photoFile);
       const imagesRef = ref(storageRef);
+      const downloadURLPromise = getDownloadURL(imagesRef);
 
-      const processedPhoto = await getDownloadURL(imagesRef);
-      console.log("processedPhoto", processedPhoto);
+      const [processedPhoto] = await Promise.all([downloadURLPromise]);
+      return processedPhoto;
     } catch (error) {
       console.log("Error in upload", error);
     }
@@ -97,13 +102,13 @@ export default function RegistrationScreen({ navigation, onLayout, setAuth }) {
     Keyboard.dismiss();
   };
 
-  const onSingUp = () => {
-    uploadUserPhotoToServer();
+  const onSingUp = async () => {
+    const userAvatar = await uploadUserPhotoToServer();
     console.log(
       "Credentials",
       `${state.name} + ${state.email} + ${state.password}`
     );
-    dispatch(authSignUpUser({ ...state, avatar: photo.uri }));
+    dispatch(authSignUpUser({ avatar: userAvatar, ...state }));
     setAuth(true);
   };
 
@@ -223,9 +228,9 @@ export default function RegistrationScreen({ navigation, onLayout, setAuth }) {
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.btn}
-                onPress={() => {
+                onPress={async () => {
                   keyboardHide();
-                  onSingUp();
+                  await onSingUp();
                 }}
               >
                 <Text style={styles.btnTitle}>SIGN UP</Text>

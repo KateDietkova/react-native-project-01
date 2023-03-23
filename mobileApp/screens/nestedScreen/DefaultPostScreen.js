@@ -10,7 +10,11 @@ import {
 
 import { PostItem } from "../../src/components/pagesComponents/PostItem";
 import { useSelector } from "react-redux";
-import { selectNickname, selectEmail } from "../../redux/auth/authSelectors";
+import {
+  selectNickname,
+  selectEmail,
+  selectCurrentUserAvatar,
+} from "../../redux/auth/authSelectors";
 import { db } from "../../firebase/config";
 import { collection, query, onSnapshot, getDocs } from "firebase/firestore";
 
@@ -18,38 +22,29 @@ const DefaultScreen = ({ onLayout, route, navigation, hide }) => {
   const [posts, setPosts] = useState([]);
   const userName = useSelector(selectNickname);
   const userEmail = useSelector(selectEmail);
-
-  const getAllPosts = async () => {
-    //  const querySnapshot = await getDocs(collection(db, "posts"));
-    //  querySnapshot.forEach((doc) => {
-    //    // doc.data() is never undefined for query doc snapshots
-    //    posts.push(doc.data());
-    //  });
-  };
+  const userAvatar = useSelector(selectCurrentUserAvatar);
 
   useEffect(() => {
-    (async () => {
-      console.log(Date.now());
-      const q = query(collection(db, "posts"));
-      // const filteredByCreatedTime = [];
-      const unsubscribe = onSnapshot(q, (docs) => {
-        docs.forEach((doc) => {
-          console.log("Posts", posts);
-          const isPost = posts.filter((post) => post.id === doc.id);
-          console.log(isPost);
-          if (isPost.length === 0) {
-            posts.push({ id: doc.id, ...doc.data() });
-          }
-        });
-        posts.sort(
-          (firstPost, secondPost) => secondPost.createAt - firstPost.createAt
-        );
+    const q = query(collection(db, "posts"));
+    const unsubscribe = onSnapshot(q, (docs) => {
+      docs.forEach((doc) => {
+        const isPost = posts.filter((post) => post.id === doc.id);
+        if (isPost.length === 0) {
+          posts.push({ id: doc.id, ...doc.data() });
+        }
       });
+      posts.sort(
+        (firstPost, secondPost) => secondPost.createAt - firstPost.createAt
+      );
       setPosts(posts);
-    })();
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
-  console.log(posts);
+  // console.log("Posts", posts);
 
   return (
     <SafeAreaView
@@ -68,7 +63,11 @@ const DefaultScreen = ({ onLayout, route, navigation, hide }) => {
                   <View style={styles.userInfoContainer}>
                     <Image
                       style={styles.userPhoto}
-                      source={require("../../assets/images/userPhoto.png")}
+                      source={
+                        userAvatar
+                          ? { uri: userAvatar }
+                          : require("../../assets/images/default_user_photo.jpg")
+                      }
                     />
                     <View style={styles.userInfo}>
                       <Text style={styles.userName}>{userName}</Text>
@@ -113,6 +112,7 @@ const styles = StyleSheet.create({
   userPhoto: {
     width: 60,
     height: 60,
+    borderRadius: 8,
   },
   userInfo: {
     marginLeft: 8,
