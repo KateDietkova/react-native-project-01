@@ -8,30 +8,41 @@ import { useState, useEffect } from "react";
 export const PostItem = ({ post, navigation }) => {
   const [comments, setComments] = useState([]);
 
-  const getAllComments = async () => {
-    try {
-      const q = query(collection(db, "posts", post.id, "comments"));
-      const unsubscribe = onSnapshot(q, (docs) => {
-        docs.forEach((doc) => {
-          const isComment = comments.filter((comment) => comment.id === doc.id);
-          if (isComment.length === 0) {
-            // console.log("Doc", doc);
-            comments.push({ id: doc.id, ...doc.data() });
-          }
-        });
-      });
-      setComments(comments);
-    } catch (error) {
-      console.log("Error in getAllComments PostItem", error);
-    }
-    
-  };
+  // const getAllComments = () => {
+  //   const q = query(collection(db, "posts", post.id, "comments"));
+  //   const unsubscribe = onSnapshot(q, (docs) => {
+  //     docs.forEach((doc) => {
+  //       const isComment = comments.filter((comment) => comment.id === doc.id);
+  //       if (isComment.length === 0) {
+  //         comments.push({ id: doc.id, ...doc.data() });
+  //       }
+  //     });
+  //     setComments(comments);
+  //   });
+  // }
+
+  // getAllComments();
 
   useEffect(() => {
-    (async () => {
-      await getAllComments();
-    })();
-  }, []);
+    const q = query(collection(db, "posts", post.id, "comments"));
+    const unsubscribe = onSnapshot(q, (docs) => {
+      docs.forEach((doc) => {
+        const isComment = comments.filter((comment) => comment.id === doc.id);
+        if (isComment.length === 0) {
+          setComments((prevState) => [
+            ...prevState,
+            { id: doc.id, ...doc.data() },
+          ]);
+        }
+      });
+      // setComments(comments);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [Date.now()]);
+
+  console.log("PostItem", comments.length);
 
   return (
     <View style={styles.postItemContainer}>

@@ -32,7 +32,7 @@ export const CommentItem = ({ comment }) => {
   const index = date.indexOf("GMT");
   const sliceDate = date.substring(0, index);
   const isOwner = currentUserId === comment.ownerId;
-  console.log(isOwner);
+  console.log("Is Owner",isOwner);
 
   return (
     <View

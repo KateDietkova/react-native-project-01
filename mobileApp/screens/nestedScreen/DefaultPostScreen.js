@@ -30,21 +30,24 @@ const DefaultScreen = ({ onLayout, route, navigation, hide }) => {
       docs.forEach((doc) => {
         const isPost = posts.filter((post) => post.id === doc.id);
         if (isPost.length === 0) {
-          posts.push({ id: doc.id, ...doc.data() });
+          setPosts((prevState) => [
+            ...prevState,
+            { id: doc.id, ...doc.data() },
+          ]);
         }
       });
-      posts.sort(
-        (firstPost, secondPost) => secondPost.createAt - firstPost.createAt
-      );
-      setPosts(posts);
+      // setPosts(posts);
     });
 
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [Date.now()]);
 
   // console.log("Posts", posts);
+  posts.sort(
+    (firstPost, secondPost) => secondPost.createAt - firstPost.createAt
+  );
 
   return (
     <SafeAreaView
@@ -95,7 +98,6 @@ const styles = StyleSheet.create({
   postScreenContainer: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingBottom: 43,
   },
   userInfoContainer: {
     flexDirection: "row",
