@@ -36,7 +36,6 @@ const DefaultScreen = ({ onLayout, route, navigation, hide }) => {
           ]);
         }
       });
-      // setPosts(posts);
     });
 
     return () => {
@@ -44,7 +43,6 @@ const DefaultScreen = ({ onLayout, route, navigation, hide }) => {
     };
   }, [Date.now()]);
 
-  // console.log("Posts", posts);
   posts.sort(
     (firstPost, secondPost) => secondPost.createAt - firstPost.createAt
   );

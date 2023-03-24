@@ -1,27 +1,20 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import CommentIcon from "../icons/CommentIcon";
 import LocationIcon from "../icons/LocationIcon";
+import LikesIcon from "../../../src/components/icons/LikesIcon";
 import { db } from "../../../firebase/config";
 import { collection, query, onSnapshot } from "firebase/firestore";
 import { useState, useEffect } from "react";
 
 export const PostItem = ({ post, navigation }) => {
   const [comments, setComments] = useState([]);
-
-  // const getAllComments = () => {
-  //   const q = query(collection(db, "posts", post.id, "comments"));
-  //   const unsubscribe = onSnapshot(q, (docs) => {
-  //     docs.forEach((doc) => {
-  //       const isComment = comments.filter((comment) => comment.id === doc.id);
-  //       if (isComment.length === 0) {
-  //         comments.push({ id: doc.id, ...doc.data() });
-  //       }
-  //     });
-  //     setComments(comments);
-  //   });
-  // }
-
-  // getAllComments();
 
   useEffect(() => {
     const q = query(collection(db, "posts", post.id, "comments"));
@@ -35,7 +28,6 @@ export const PostItem = ({ post, navigation }) => {
           ]);
         }
       });
-      // setComments(comments);
     });
     return () => {
       unsubscribe();
@@ -59,28 +51,35 @@ export const PostItem = ({ post, navigation }) => {
         </View>
         <Text style={styles.imageDesc}>{post.title}</Text>
         <View style={styles.postInfoContainer}>
-          <TouchableOpacity
-            style={styles.commentBtn}
-            onPress={() =>
-              navigation.navigate("Comments", {
-                postId: post.id,
-                postImage: post.uri,
-                userId: post.userId,
-                ownerNickName: post.nickName,
-              })
-            }
-          >
-            <CommentIcon commentsAmount={comments.length} />
-            <Text
-              style={
-                comments.length > 0
-                  ? { ...styles.commentAmount, color: "#212121" }
-                  : styles.commentAmount
+          <View style={styles.postInfoBtnContainer}>
+            <TouchableOpacity
+              style={styles.commentBtn}
+              onPress={() =>
+                navigation.navigate("Comments", {
+                  postId: post.id,
+                  postImage: post.uri,
+                  userId: post.userId,
+                  ownerNickName: post.nickName,
+                })
               }
             >
-              {comments.length}
-            </Text>
-          </TouchableOpacity>
+              <CommentIcon commentsAmount={comments.length} />
+              <Text
+                style={
+                  comments.length > 0
+                    ? { ...styles.commentAmount, color: "#212121" }
+                    : styles.commentAmount
+                }
+              >
+                {comments.length}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.likesBtn}>
+              <LikesIcon />
+              <Text style={styles.commentAmount}>0</Text>
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
             style={styles.postInfo}
@@ -109,7 +108,7 @@ const styles = StyleSheet.create({
     position: "relative",
     flex: 1,
     height: 300,
-    width: 350,
+    width: "100%",
     marginTop: 32,
     justifyContent: "flex-end",
   },
@@ -119,7 +118,8 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     height: 240,
-    width: 350,
+    width: "100%",
+    // width: Dimensions.get("window").width,
     borderRadius: 8,
     alignItems: "center",
   },
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 8,
     height: 240,
-    width: 350,
+    width: "100%",
   },
   imageDesc: {
     fontFamily: "RobotoMedium",
@@ -145,6 +145,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  postInfoBtnContainer: {
+    flexDirection: "row",
+  },
   locationInfo: {
     marginLeft: 4,
     fontFamily: "RobotoRegular",
@@ -156,6 +159,11 @@ const styles = StyleSheet.create({
   commentBtn: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  likesBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 24,
   },
   commentAmount: {
     marginLeft: 6,

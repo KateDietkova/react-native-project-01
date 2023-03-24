@@ -7,18 +7,56 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  Dimensions,
 } from "react-native";
-import CommentIcon from "../../src/components/icons/CommentIcon";
-import LocationIcon from "../../src/components/icons/LocationIcon";
-import LikesIcon from "../../src/components/icons/LikesIcon";
+import { useState, useEffect } from "react";
+
 import CustomIcon from "../../src/components/icons/AddIcon";
 import CloseIcon from "../../src/components/icons/CloseIcon";
 import Logout from "../../src/components/icons/LogoutIcon";
 import { useDispatch } from "react-redux";
 import { authSignOutUser } from "../../redux/auth/authOperations";
 
-const ProfileScreen = ({ onLayout, setAuth }) => {
+import { PostItem } from "../../src/components/pagesComponents/PostItem";
+import { useSelector } from "react-redux";
+import {
+  selectCurrentUserId,
+  selectCurrentUserAvatar,
+} from "../../redux/auth/authSelectors";
+import { db } from "../../firebase/config";
+import { collection, query, onSnapshot, getDocs } from "firebase/firestore";
+
+const ProfileScreen = ({ onLayout, navigation }) => {
+  const [posts, setPosts] = useState([]);
+  const currentUserId = useSelector(selectCurrentUserId);
+  const userAvatar = useSelector(selectCurrentUserAvatar);
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const q = query(collection(db, "posts"));
+    const unsubscribe = onSnapshot(q, (docs) => {
+      docs.forEach((doc) => {
+        const isPost = posts.filter((post) => post.id === doc.id);
+        if (isPost.length === 0) {
+          setPosts((prevState) => [
+            ...prevState,
+            { id: doc.id, ...doc.data() },
+          ]);
+        }
+      });
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [Date.now()]);
+
+  const userPosts = posts.filter((post) => post.userId === currentUserId);
+  userPosts.sort(
+    (firstPost, secondPost) => secondPost.createAt - firstPost.createAt
+  );
+
   return (
     <SafeAreaView>
       <ScrollView>
@@ -32,8 +70,12 @@ const ProfileScreen = ({ onLayout, setAuth }) => {
               <View style={styles.profileContainer}>
                 <View style={styles.photoContainer}>
                   <Image
-                    // style={styles.postImage}
-                    source={require("../../assets/images/userAvatar.png")}
+                    style={styles.userAvatar}
+                    source={
+                      userAvatar
+                        ? { uri: userAvatar }
+                        : require("../../assets/images/default_user_photo.jpg")
+                    }
                   />
 
                   <TouchableOpacity style={styles.changePhotoBtn}>
@@ -45,11 +87,20 @@ const ProfileScreen = ({ onLayout, setAuth }) => {
                   style={styles.logoutBtn}
                   onPress={() => dispatch(authSignOutUser())}
                 >
-                  {/* <CustomIcon style={styles.addIcon} /> */}
                   <Logout style={styles.logoutIcon} />
                 </TouchableOpacity>
                 <Text style={styles.userName}>Natali Romanova</Text>
-                <View style={styles.post}>
+                <View style={{width: "100%"}}>
+                  {userPosts &&
+                    userPosts.map((post) => (
+                      <PostItem
+                        key={post.id}
+                        post={post}
+                        navigation={navigation}
+                      />
+                    ))}
+                </View>
+                {/* <View style={styles.post}>
                   <View style={styles.postImageContainer}>
                     <Image
                       style={styles.postImage}
@@ -101,7 +152,7 @@ const ProfileScreen = ({ onLayout, setAuth }) => {
                       <Text style={styles.locationInfo}>Ukraine</Text>
                     </TouchableOpacity>
                   </View>
-                </View>
+                </View> */}
               </View>
             </View>
           </ImageBackground>
@@ -123,14 +174,17 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   image: {
-    resizeMode: "stretch",
+    // resizeMode: "cover",
     position: "absolute",
     top: 0,
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
   contentContainer: {
     paddingTop: 150,
   },
   profileContainer: {
+    minHeight: Dimensions.get("window").height,
     position: "relative",
     flex: 1,
     backgroundColor: "#fff",
@@ -147,6 +201,11 @@ const styles = StyleSheet.create({
     lineHeight: 35,
     textAlign: "center",
     color: "#212121",
+  },
+  userAvatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 16,
   },
 
   post: {
