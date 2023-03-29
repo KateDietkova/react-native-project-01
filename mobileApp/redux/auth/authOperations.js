@@ -7,7 +7,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
-import { app, auth } from "../../firebase/config";
+import { app } from "../../firebase/config";
 import { updateUserProfile, authStateChange, authSignOut } from "./authSlise";
 
 export const authSignUpUser =
@@ -16,7 +16,6 @@ export const authSignUpUser =
     try {
       const auth = await getAuth(app);
       await createUserWithEmailAndPassword(auth, email, password);
-      console.log("Avatar", avatar);
 
       await updateProfile(auth.currentUser, {
         displayName: name,
@@ -40,7 +39,7 @@ export const authSignUpUser =
 
 export const authSignInUser =
   ({ email, password }) =>
-  async (dispatch, getState) => {
+  async (dispatch) => {
     try {
       const auth = await getAuth(app);
       const { user } = await signInWithEmailAndPassword(auth, email, password);
@@ -62,7 +61,7 @@ export const authSignInUser =
     }
   };
 
-export const authSignOutUser = () => async (dispatch, getState) => {
+export const authSignOutUser = () => async (dispatch) => {
   try {
     const auth = await getAuth(app);
     await signOut(auth);
@@ -77,12 +76,11 @@ export const authSignOutUser = () => async (dispatch, getState) => {
   }
 };
 
-export const authSetChangeUser = () => async (dispatch, getState) => {
+export const authSetChangeUser = () => async (dispatch) => {
   try {
     const auth = await getAuth(app);
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log(user);
         dispatch(
           updateUserProfile({
             userId: user.uid,

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import {
   View,
   Text,
@@ -9,44 +9,39 @@ import {
 } from "react-native";
 
 import { PostItem } from "../../src/components/pagesComponents/PostItem";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   selectNickname,
   selectEmail,
   selectCurrentUserAvatar,
 } from "../../redux/auth/authSelectors";
-import { db } from "../../firebase/config";
-import { collection, query, onSnapshot, getDocs } from "firebase/firestore";
+import {
+  selectPosts,
+  selectPostsLoading,
+} from "../../redux/dashboard/postsSelectors";
+import { getPosts } from "../../redux/dashboard/postsOperations";
 
-const DefaultScreen = ({ onLayout, navigation, hide}) => {
-  const [posts, setPosts] = useState([]);
+const DefaultScreen = ({ onLayout, navigation, hide }) => {
+  const posts = useSelector(selectPosts);
+  const isLoading = useSelector(selectPostsLoading);
   const userName = useSelector(selectNickname);
   const userEmail = useSelector(selectEmail);
   const userAvatar = useSelector(selectCurrentUserAvatar);
-  
+  const dispatch = useDispatch();
+  let postsList = [];
 
   useEffect(() => {
-    const q = query(collection(db, "posts"));
-    const unsubscribe = onSnapshot(q, (docs) => {
-      docs.forEach((doc) => {
-        const isPost = posts.filter((post) => post.id === doc.id);
-        if (isPost.length === 0) {
-          setPosts((prevState) => [
-            ...prevState,
-            { id: doc.id, ...doc.data() },
-          ]);
-        }
-      });
-    });
-
-    return () => {
-      unsubscribe();
-    };
+    dispatch(getPosts());
   }, [Date.now()]);
 
-  posts.sort(
-    (firstPost, secondPost) => secondPost.createAt - firstPost.createAt
-  );
+  if (posts && posts.length !== 0) {
+    console.log(posts);
+    postsList = posts
+      .slice()
+      .sort(
+        (firstPost, secondPost) => secondPost.createAt - firstPost.createAt
+      );
+  }
 
   return (
     <SafeAreaView
@@ -55,7 +50,7 @@ const DefaultScreen = ({ onLayout, navigation, hide}) => {
         backgroundColor: "#FFFFFF",
       }}
     >
-      {!hide && (
+      {!hide && !isLoading && (
         <View style={styles.postScreenContainer} onLayout={onLayout}>
           {posts && (
             <FlatList
@@ -78,13 +73,9 @@ const DefaultScreen = ({ onLayout, navigation, hide}) => {
                   </View>
                 </>
               }
-              data={posts}
+              data={postsList}
               renderItem={({ item, index }) => (
-                <PostItem
-                  key={index}
-                  post={item}
-                  navigation={navigation}
-                />
+                <PostItem key={index} post={item} navigation={navigation} />
               )}
               keyExtractor={(item, indx) => indx.toString()}
             />

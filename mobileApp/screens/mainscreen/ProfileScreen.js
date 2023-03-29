@@ -9,54 +9,41 @@ import {
   SafeAreaView,
   Dimensions,
 } from "react-native";
-import { useState, useEffect } from "react";
 
 import CustomIcon from "../../src/components/icons/AddIcon";
 import CloseIcon from "../../src/components/icons/CloseIcon";
 import Logout from "../../src/components/icons/LogoutIcon";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { authSignOutUser } from "../../redux/auth/authOperations";
 
 import { PostItem } from "../../src/components/pagesComponents/PostItem";
-import { useSelector } from "react-redux";
 import {
   selectCurrentUserId,
   selectCurrentUserAvatar,
   selectNickname,
 } from "../../redux/auth/authSelectors";
-import { db } from "../../firebase/config";
-import { collection, query, onSnapshot, getDocs } from "firebase/firestore";
+import { selectPosts } from "../../redux/dashboard/postsSelectors";
 
 const ProfileScreen = ({ onLayout, navigation }) => {
-  const [posts, setPosts] = useState([]);
+  const posts = useSelector(selectPosts);
   const currentUserId = useSelector(selectCurrentUserId);
   const userAvatar = useSelector(selectCurrentUserAvatar);
   const userName = useSelector(selectNickname);
   const dispatch = useDispatch();
+  let userPosts = [];
 
-  useEffect(() => {
-    const q = query(collection(db, "posts"));
-    const unsubscribe = onSnapshot(q, (docs) => {
-      docs.forEach((doc) => {
-        const isPost = posts.filter((post) => post.id === doc.id);
-        if (isPost.length === 0) {
-          setPosts((prevState) => [
-            ...prevState,
-            { id: doc.id, ...doc.data() },
-          ]);
-        }
-      });
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [Date.now()]);
-
-  const userPosts = posts.filter((post) => post.userId === currentUserId);
   userPosts.sort(
     (firstPost, secondPost) => secondPost.createAt - firstPost.createAt
   );
+
+  if (posts && posts.length !== 0) {
+    userPosts = posts.filter((post) => post.userId === currentUserId);
+    userPosts
+      .slice()
+      .sort(
+        (firstPost, secondPost) => secondPost.createAt - firstPost.createAt
+      );
+  }
 
   return (
     <SafeAreaView>

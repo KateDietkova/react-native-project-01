@@ -15,42 +15,57 @@ import {
 import ArrowSend from "../../src/components/icons/ArrowUpSend";
 import { db } from "../../firebase/config";
 import { addDoc, collection, query, onSnapshot } from "firebase/firestore";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   selectCurrentUserId,
   selectNickname,
   selectCurrentUserAvatar,
 } from "../../redux/auth/authSelectors";
+import {
+  getComments,
+  createComment,
+} from "../../redux/dashboard/commentsOperations";
+import {
+  selectComments,
+  selectCommentsLoading,
+} from "../../redux/dashboard/commentsSelectors";
 import { CommentItem } from "../../src/components/pagesComponents/CommentItem";
 
 const screenHeight = Dimensions.get("window").height;
 
-const CommentsScreen = ({
-  onLayout,
-  route,
-  isHideBar,
-}) => {
+const CommentsScreen = ({ onLayout, route, isHideBar }) => {
   const [comment, setComment] = useState("");
-  const [comments, setComments] = useState([]);
+  const comments = useSelector(selectComments);
+  const isLoading = useSelector(selectCommentsLoading);
   const { postId, postImage } = route.params;
   const currentUserId = useSelector(selectCurrentUserId);
   const currentNickName = useSelector(selectNickname);
   const currentUserAvatar = useSelector(selectCurrentUserAvatar);
-
+  const dispatch = useDispatch();
+  let commentsList;
 
   const createComments = async () => {
-    const createComment = await addDoc(
-      collection(db, "posts", postId, "comments"),
-      {
+    // const createComment = await addDoc(
+    //   collection(db, "posts", postId, "comments"),
+    //   {
+    //     postId,
+    //     ownerNickName: currentNickName,
+    //     ownerId: currentUserId,
+    //     createAt: Date.now(),
+    //     text: comment,
+    //     ownerAvatar: currentUserAvatar
+    //       ? currentUserAvatar
+    //       : "https://img.myloview.com/stickers/default-avatar-profile-icon-vector-social-media-user-photo-700-205577532.jpg",
+    //   }
+    // );
+    dispatch(
+      createComment({
         postId,
-        ownerNickName: currentNickName,
-        ownerId: currentUserId,
-        createAt: Date.now(),
-        text: comment,
-        ownerAvatar: currentUserAvatar
-          ? currentUserAvatar
-          : "https://img.myloview.com/stickers/default-avatar-profile-icon-vector-social-media-user-photo-700-205577532.jpg",
-      }
+        currentUserId,
+        currentNickName,
+        currentUserAvatar,
+        comment,
+      })
     );
     setComment("");
   };
@@ -66,58 +81,49 @@ const CommentsScreen = ({
   }, []);
 
   useEffect(() => {
-    const q = query(collection(db, "posts", postId, "comments"));
-    const unsubscribe = onSnapshot(q, (docs) => {
-      docs.forEach((doc) => {
-        console.log("Doc", doc);
-        const isComment = comments.filter((comment) => comment.id === doc.id);
-        console.log("isComment", isComment);
-        if (isComment.length === 0) {
-          setComments((prevState) => [
-            ...prevState,
-            { id: doc.id, ...doc.data() },
-          ]);
-        }
-      });
-    });
-
-    return () => {
-      unsubscribe();
-    };
+    dispatch(getComments({ postId }));
   }, [Date.now()]);
-  comments.sort(
-    (firstComment, secondComment) =>
-      firstComment.createAt - secondComment.createAt
-  );
 
+  if (comments && comments.length !== 0) {
+    console.log(comments);
+    commentsList = comments
+      .slice()
+      .sort(
+        (firstComment, secondComment) =>
+          firstComment.createAt - secondComment.createAt
+      );
+  }
+  console.log("isLoading", isLoading);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.commentsScreenContainer} onLayout={onLayout}>
-        <FlatList
-          style={{
-            paddingHorizontal: 16,
-            flex: 1,
-          }}
-          ListHeaderComponent={
-            <>
-              <View style={styles.imageContainer}>
-                <Image
-                  style={styles.postImage}
-                  source={
-                    postImage
-                      ? { uri: postImage }
-                      : require("../../assets/images/posts/default_image.png")
-                  }
-                />
-              </View>
-            </>
-          }
-          data={comments}
-          renderItem={({ item, index }) => (
-            <CommentItem key={index} comment={item} />
-          )}
-          keyExtractor={(item, indx) => indx.toString()}
-        />
+        {!isLoading && (
+          <FlatList
+            style={{
+              paddingHorizontal: 16,
+              flex: 1,
+            }}
+            ListHeaderComponent={
+              <>
+                <View style={styles.imageContainer}>
+                  <Image
+                    style={styles.postImage}
+                    source={
+                      postImage
+                        ? { uri: postImage }
+                        : require("../../assets/images/posts/default_image.png")
+                    }
+                  />
+                </View>
+              </>
+            }
+            data={commentsList}
+            renderItem={({ item, index }) => (
+              <CommentItem key={index} comment={item} />
+            )}
+            keyExtractor={(item, indx) => indx.toString()}
+          />
+        )}
       </View>
       <KeyboardAvoidingView>
         <View style={styles.commentForm}>
