@@ -22,6 +22,7 @@ import { useSelector } from "react-redux";
 import {
   selectCurrentUserId,
   selectCurrentUserAvatar,
+  selectNickname,
 } from "../../redux/auth/authSelectors";
 import { db } from "../../firebase/config";
 import { collection, query, onSnapshot, getDocs } from "firebase/firestore";
@@ -30,7 +31,7 @@ const ProfileScreen = ({ onLayout, navigation }) => {
   const [posts, setPosts] = useState([]);
   const currentUserId = useSelector(selectCurrentUserId);
   const userAvatar = useSelector(selectCurrentUserAvatar);
-
+  const userName = useSelector(selectNickname);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -89,8 +90,8 @@ const ProfileScreen = ({ onLayout, navigation }) => {
                 >
                   <Logout style={styles.logoutIcon} />
                 </TouchableOpacity>
-                <Text style={styles.userName}>Natali Romanova</Text>
-                <View style={{width: "100%"}}>
+                <Text style={styles.userName}>{userName}</Text>
+                <View style={{ width: "100%" }}>
                   {userPosts &&
                     userPosts.map((post) => (
                       <PostItem
@@ -100,59 +101,6 @@ const ProfileScreen = ({ onLayout, navigation }) => {
                       />
                     ))}
                 </View>
-                {/* <View style={styles.post}>
-                  <View style={styles.postImageContainer}>
-                    <Image
-                      style={styles.postImage}
-                      source={require("../../assets/images/posts/postImage-1.png")}
-                    />
-                  </View>
-                  <Text style={styles.imageDesc}>Forest</Text>
-                  <View style={styles.postInfoContainer}>
-                    <View style={styles.postInfoBtnContainer}>
-                      <TouchableOpacity style={styles.commentBtn}>
-                        <CommentIcon />
-                        <Text style={styles.commentAmount}>0</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity style={styles.likesBtn}>
-                        <LikesIcon />
-                        <Text style={styles.commentAmount}>0</Text>
-                      </TouchableOpacity>
-                    </View>
-
-                    <TouchableOpacity style={styles.postInfo}>
-                      <LocationIcon />
-                      <Text style={styles.locationInfo}>Ukraine</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
-                <View style={styles.post}>
-                  <Image
-                    style={styles.postImage}
-                    source={require("../../assets/images/posts/postImage-1.png")}
-                  />
-                  <Text style={styles.imageDesc}>Forest</Text>
-                  <View style={styles.postInfoContainer}>
-                    <View style={styles.postInfoBtnContainer}>
-                      <TouchableOpacity style={styles.commentBtn}>
-                        <CommentIcon />
-                        <Text style={styles.commentAmount}>0</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity style={styles.likesBtn}>
-                        <LikesIcon />
-                        <Text style={styles.commentAmount}>0</Text>
-                      </TouchableOpacity>
-                    </View>
-
-                    <TouchableOpacity style={styles.postInfo}>
-                      <LocationIcon />
-                      <Text style={styles.locationInfo}>Ukraine</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View> */}
               </View>
             </View>
           </ImageBackground>

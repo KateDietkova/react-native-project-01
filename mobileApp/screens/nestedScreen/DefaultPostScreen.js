@@ -18,11 +18,12 @@ import {
 import { db } from "../../firebase/config";
 import { collection, query, onSnapshot, getDocs } from "firebase/firestore";
 
-const DefaultScreen = ({ onLayout, route, navigation, hide }) => {
+const DefaultScreen = ({ onLayout, navigation, hide}) => {
   const [posts, setPosts] = useState([]);
   const userName = useSelector(selectNickname);
   const userEmail = useSelector(selectEmail);
   const userAvatar = useSelector(selectCurrentUserAvatar);
+  
 
   useEffect(() => {
     const q = query(collection(db, "posts"));
@@ -79,7 +80,11 @@ const DefaultScreen = ({ onLayout, route, navigation, hide }) => {
               }
               data={posts}
               renderItem={({ item, index }) => (
-                <PostItem key={index} post={item} navigation={navigation} />
+                <PostItem
+                  key={index}
+                  post={item}
+                  navigation={navigation}
+                />
               )}
               keyExtractor={(item, indx) => indx.toString()}
             />

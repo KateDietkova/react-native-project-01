@@ -24,7 +24,11 @@ const Home = ({ onLayout, setAuth }) => {
       initialRouteName="DefaultScreen"
       screenOptions={{
         tabBarShowLabel: false,
-        tabBarStyle: { display: isHideTabBar ? "none" : "flex", height: 83, borderTopWidth: 1},
+        tabBarStyle: {
+          display: isHideTabBar ? "none" : "flex",
+          height: 83,
+          borderTopWidth: 1,
+        },
       }}
     >
       <MainTab.Screen
@@ -112,7 +116,10 @@ const Home = ({ onLayout, setAuth }) => {
         }}
       >
         {(props) => (
-          <ProfileScreen {...props} onLayout={onLayout} setAuth={setAuth} />
+          <ProfileScreen
+            {...props}
+            onLayout={onLayout}
+          />
         )}
       </MainTab.Screen>
     </MainTab.Navigator>

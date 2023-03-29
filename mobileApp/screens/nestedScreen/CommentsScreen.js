@@ -25,13 +25,18 @@ import { CommentItem } from "../../src/components/pagesComponents/CommentItem";
 
 const screenHeight = Dimensions.get("window").height;
 
-const CommentsScreen = ({ onLayout, route, isHideBar }) => {
+const CommentsScreen = ({
+  onLayout,
+  route,
+  isHideBar,
+}) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const { postId, postImage } = route.params;
   const currentUserId = useSelector(selectCurrentUserId);
   const currentNickName = useSelector(selectNickname);
   const currentUserAvatar = useSelector(selectCurrentUserAvatar);
+
 
   const createComments = async () => {
     const createComment = await addDoc(

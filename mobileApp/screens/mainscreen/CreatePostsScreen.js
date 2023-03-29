@@ -46,6 +46,7 @@ const CreatePostScreen = ({ onLayout, navigation }) => {
         uri,
         userId,
         nickName,
+        likes: 0,
         ...state,
       });
     } catch (error) {

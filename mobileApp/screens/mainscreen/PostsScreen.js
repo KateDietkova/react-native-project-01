@@ -8,10 +8,11 @@ import { HeaderTitle } from "../../src/components/headers/HeaderTitle";
 import Logout from "../../src/components/icons/LogoutIcon";
 import ArrowLeft from "../../src/components/icons/ArrowLeftIcon";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useState } from "react";
 
 const NestedScreen = createStackNavigator();
 
-const PostScreen = ({ onLayout, setAuth, isHideBar, hide }) => {
+const PostScreen = ({ onLayout, setAuth, isHideBar, hide}) => {
   return (
     <NestedScreen.Navigator initialRouteName="DefaultScreen">
       <NestedScreen.Screen
@@ -44,6 +45,7 @@ const PostScreen = ({ onLayout, setAuth, isHideBar, hide }) => {
             <TouchableOpacity
               style={{ marginLeft: 16 }}
               onPress={() => {
+                isHideBar(false);
                 navigation.navigate("DefaultScreen");
               }}
             >
