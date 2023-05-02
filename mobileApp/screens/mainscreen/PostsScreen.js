@@ -8,7 +8,6 @@ import { HeaderTitle } from "../../src/components/headers/HeaderTitle";
 import Logout from "../../src/components/icons/LogoutIcon";
 import ArrowLeft from "../../src/components/icons/ArrowLeftIcon";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { useState } from "react";
 
 const NestedScreen = createStackNavigator();
 
