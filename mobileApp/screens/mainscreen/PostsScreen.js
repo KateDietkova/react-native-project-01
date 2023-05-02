@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { styles } from "./PostsScreen.styled";
 import { createStackNavigator } from "@react-navigation/stack";
 import DefaultScreen from "../nestedScreen/DefaultPostScreen";
 import MapScreen from "../nestedScreen/MapScreen";
@@ -87,18 +87,4 @@ const PostScreen = ({ onLayout, setAuth, isHideBar, hide}) => {
 
 export default PostScreen;
 
-const styles = StyleSheet.create({
-  headerScreen: {
-    height: 88,
-    borderBottomWidth: 2,
-  },
-  tabBarIconWrapper: {
-    paddingVertical: 8,
-    paddingHorizontal: 23,
-    borderRadius: 20,
-    backgroundColor: "#FF6C00",
-    alignItems: "center",
-    justifyContent: "center",
-    top: -9,
-  },
-});
+

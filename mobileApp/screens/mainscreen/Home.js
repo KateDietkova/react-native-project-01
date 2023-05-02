@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import ArrowLeft from "../../src/components/icons/ArrowLeftIcon";
 import { HeaderTitle } from "../../src/components/headers/HeaderTitle";
 import { IconBtn } from "../../src/components/headers/IconBtn";
@@ -14,6 +14,7 @@ import UserTabBarIcon from "../../src/components/tabBarIcons/UserTabBarIcon";
 import PostsTabBarIcon from "../../src/components/tabBarIcons/PostsTabBarIcon";
 import Ionicons from "react-native-vector-icons/Ionicons"; // add
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { styles } from "./Home.styled";
 
 const MainTab = createBottomTabNavigator();
 
@@ -115,31 +116,10 @@ const Home = ({ onLayout, setAuth }) => {
           ),
         }}
       >
-        {(props) => (
-          <ProfileScreen
-            {...props}
-            onLayout={onLayout}
-          />
-        )}
+        {(props) => <ProfileScreen {...props} onLayout={onLayout} />}
       </MainTab.Screen>
     </MainTab.Navigator>
   );
 };
 
 export default Home;
-
-const styles = StyleSheet.create({
-  headerScreen: {
-    height: 88,
-    borderBottomWidth: 2,
-  },
-  tabBarIconWrapper: {
-    paddingVertical: 8,
-    paddingHorizontal: 23,
-    borderRadius: 20,
-    backgroundColor: "#FF6C00",
-    alignItems: "center",
-    justifyContent: "center",
-    top: -9,
-  },
-});

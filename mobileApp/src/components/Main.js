@@ -11,7 +11,6 @@ const Main = ({ onLayoutRootView }) => {
 //   console.log(stateChange);
 
   useEffect(() => {
-    console.log(stateChange);
     dispatch(authSetChangeUser());
   }, []);
 

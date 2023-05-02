@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
+import { styles } from "./HeaderTitle.styled";
 
 export const HeaderTitle = ({ title }) => {
   return (
@@ -8,16 +9,4 @@ export const HeaderTitle = ({ title }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontFamily: "RobotoMedium",
-    fontSize: 20,
-    lineHeight: 22,
-    color: "#212121",
-  },
-});
+

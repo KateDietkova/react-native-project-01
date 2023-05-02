@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-
+import { styles } from "./MapScreen.styled";
 
 const MapScreen = ({ route }) => {
-  const [location, setlocation] = useState(route.params.location)
+  const [location, setlocation] = useState(route.params.location);
   const [isShowMarker, setisShowMarker] = useState(false);
   useEffect(() => {
     if (Object.keys(location).length !== 0) {
@@ -44,16 +44,3 @@ const MapScreen = ({ route }) => {
 };
 
 export default MapScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  mapStyle: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
-  },
-});

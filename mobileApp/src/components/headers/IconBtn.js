@@ -1,7 +1,8 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { Link } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { authSignOutUser } from "../../../redux/auth/authOperations";
+import { styles } from "./IconBtn.styled";
 
 export const IconBtn = ({ icon: Icon, navigate, setAuth }) => {
   const dispatch = useDispatch();
@@ -26,10 +27,4 @@ export const IconBtn = ({ icon: Icon, navigate, setAuth }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  headerBtn: {
-    alignItems: "center",
-    marginRight: 20,
-    marginLeft: 16,
-  },
-});
+
